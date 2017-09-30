@@ -22,24 +22,17 @@ String display = (String) session.getAttribute("display");
 	<%if (error != null) { %>
 		<script>alert('${error}');</script>
 	<%} %>
-	
+
 	<img src="https://www.unsw.edu.au/sites/default/files/UNSW_0.png" alt="UNSW Sydney">
 	<%if (isLoggedIn == "true") { %>
-		<jsp:include page="headerUser.jsp"/>
-		<%if (display == "wall") { %>
-			<jsp:include page="wall.jsp"/>
-		<%} else if (display == "profile") { %>
-			<jsp:include page="profile.jsp"/>
-		<%} else if (display == "edit") { %>
-			<jsp:include page="editProfile.jsp"/>
-		<%} else if (display == "result") { %>
+		<jsp:include page="adminHeader.jsp"/>
+		<%if (display == "result") { %>
 			<jsp:include page="result.jsp"/>
-		<%} else if (display == "otherProfile") { %>
-			<jsp:include page="otherProfile.jsp"/>
+		<%} else if (display == "activity") { %>
+			<jsp:include page="activity.jsp"/>
 		<%} %>
 	<%} else { %>
-		<jsp:include page="headerLogin.jsp"/>
-		<jsp:include page="registration.jsp"/>
+		<jsp:include page="adminHeaderLogin.jsp"/>
 	<%} %>
 </body>
 

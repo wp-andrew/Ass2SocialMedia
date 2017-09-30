@@ -3,12 +3,14 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <%@ page import="java.util.List" %>
+<%@ page import="web.app.eng.dto.Admin" %>
 <%@ page import="web.app.eng.dto.User" %>
 <%@ page import="web.app.eng.service.UserService" %>
 
 <html>
 
 <%
+Admin admin = (Admin) session.getAttribute("admin");
 User user = (User) session.getAttribute("user");
 List<User> results = (List<User>) session.getAttribute("searchResults");
 %>
@@ -54,9 +56,21 @@ div.panel {
 		<ul class="list-group">
 			<%if (results != null) { %>
 				<%for (User result : results) {%>
-					<%if (!result.getUsername().equals(user.getUsername())) { %>
+					<%if (admin != null || !result.getUsername().equals(user.getUsername())) { %>
 						<li class="list-group-item">
-						<%=result.getUsername() %><br/>
+						<%if (admin != null) { %>
+							<form action="adminControl" method="post">
+								<input type="hidden" name="action" value="activity">
+								<input type="hidden" name="username" value="<%=result.getUsername() %>">
+								<input type="submit" value="<%=result.getUsername() %>" style="background:none; border-width:0px; color:blue; text-decoration:underline;">
+							</form>
+						<%} else { %>
+							<form action="control" method="post">
+								<input type="hidden" name="action" value="otherProfile">
+								<input type="hidden" name="username" value="<%=result.getUsername() %>">
+								<input type="submit" value="<%=result.getUsername() %>" style="background:none; border-width:0px; color:blue; text-decoration:underline;">
+							</form>
+						<%} %>
 						<%=result.getFirstname() %> <%=result.getSurname() %>
 						</li>
 					<%} %>

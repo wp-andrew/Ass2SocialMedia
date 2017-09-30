@@ -14,11 +14,16 @@
 	It's free and always will be.<br/><br/>
 	
 	<form action="control" onsubmit="return validateForm(this.id)" method="POST">
+	
 		<input type="hidden" name="action" value="registration">
+		
 		<input type="text" name="firstname" placeholder="First name" required><!--
 		--><input type="text" name="surname" placeholder="Surname" required><br/>
+		
 		<input type="text" name="username" placeholder="Username" size="45" required><br/>
+		
 		<input type="text" name="email" placeholder="Email address" size="45" required><br/>
+		
 		<input type="password" name="password" placeholder="New password" size="45" required><br/><br/>
 		
 		Birthday<br/>

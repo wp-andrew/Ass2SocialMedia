@@ -2,8 +2,10 @@ package web.app.eng.dto;
 
 public class Post {
 	private int id;
+	private String datetime;
 	private String poster;
 	private String content;
+	private int likes;
 	
 	public int getId() {
 		return id;
@@ -11,6 +13,14 @@ public class Post {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public String getDatetime() {
+		return datetime;
+	}
+
+	public void setDatetime(String datetime) {
+		this.datetime = datetime;
 	}
 	
 	public String getPoster() {
@@ -27,5 +37,13 @@ public class Post {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
 	}
 }

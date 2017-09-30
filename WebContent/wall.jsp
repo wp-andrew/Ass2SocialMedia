@@ -27,17 +27,29 @@ List<Post> posts = postService.getPostList(user.getUsername());
 
 <body>
 	<div class="container">
+	
 		<h2>WALL</h2>
+		
+		<form action="control" method="POST">
+			<input type="hidden" name="action" value="post">
+			<input type="hidden" name="poster" value="<%=user.getUsername() %>">
+			<textarea name="content" placeholder="What's on your mind?" cols="50" rows="5"></textarea>
+			<input type="submit" value="Post">
+		</form>
+		
 		<ul class="list-group">
 			<%if (posts != null) { %>
 				<%for (Post post : posts) {%>
 					<li class="list-group-item">
 					<%=post.getPoster() %><br/>
-					<%=post.getContent() %>
+					<%=post.getDatetime() %><br/>
+					<%=post.getContent() %><br/>
+					<%=post.getLikes() %>&#128077;
 					</li>
 				<%} %>
 			<%} %>
 		</ul>
+		
 	</div>
 </body>
 

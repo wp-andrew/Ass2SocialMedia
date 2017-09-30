@@ -100,4 +100,29 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 		return logs;
 	}
 	
+	@Override
+	public List<Log> getActivity(String username) {
+		Connection connection = getConnection();
+		
+		List<Log> logs = new ArrayList<Log>();
+		
+		String sql = "SELECT * FROM log WHERE subject=? ORDER BY datetime DESC;";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, username);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+                Log log = convertLog(resultSet);
+                logs.add(log);
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return logs;
+	}
+	
 }

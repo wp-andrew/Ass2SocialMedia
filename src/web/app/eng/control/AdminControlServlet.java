@@ -1,10 +1,8 @@
 package web.app.eng.control;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
-import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -13,23 +11,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import web.app.eng.dto.Post;
+import web.app.eng.dto.Admin;
 import web.app.eng.dto.User;
-import web.app.eng.service.PostService;
 import web.app.eng.service.ServiceException;
 import web.app.eng.service.UserService;
+import web.app.eng.service.AdminService;
 
 /**
- * Servlet implementation class ControlServlet
+ * Servlet implementation class AdminControlServlet
  */
-@WebServlet(urlPatterns="/control", displayName="ControlServlet")
-public class ControlServlet extends HttpServlet {
+@WebServlet(urlPatterns="/adminControl", displayName="AdminControlServlet")
+public class AdminControlServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public ControlServlet() {
+    public AdminControlServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -52,45 +50,23 @@ public class ControlServlet extends HttpServlet {
             action = request.getParameter("action");
         }
 		
-        String nextPage = "home.jsp";
-        if (action.equals("registration")) {
-            UserService userService = new UserService();
-            User user = userService.create(request);
-            try {
-                if (!userService.register(user)) {
-                	nextPage = "registrationError.jsp";
-                };
-            }
-            catch (MessagingException e) {
-                e.printStackTrace();
-            }
-            if (!nextPage.equals("registrationError.jsp"))
-            	nextPage = "confirmEmail.jsp";
-		}
-        else if (action.equals("confirm")){
-            UserService userService = new UserService();
-            userService.confirmEmail(request.getParameter("username"));
-            nextPage = "registrationComplete.jsp";
-        }
-        
-		else if (action.equals("login")) {
-			UserService userService = new UserService();
-			User user = userService.create(request);
+        String nextPage = "adminHome.jsp";
+        if (action.equals("login")) {
+        	AdminService adminService = new AdminService();
+			Admin admin = adminService.create(request);
 			try {
-				userService.login(user.getUsername(), user.getPassword());
-				user = userService.selectUser(user.getUsername());
+				adminService.login(admin.getUsername(), admin.getPassword());
 				
 				HttpSession session = request.getSession();
 				session.setAttribute("login", "true");
-				session.setAttribute("user", user);
-				session.setAttribute("display", "wall");
+				session.setAttribute("admin", admin);
 				session.setMaxInactiveInterval(60*60);
 			}
 			catch (ServiceException e) {
 				request.setAttribute("error", e.getMessage());
 			}
 		}
-
+        
         else if (action.equals("search")) {			
 			UserService userService = new UserService();
 			String tagName = request.getParameter("tagName");
@@ -122,53 +98,42 @@ public class ControlServlet extends HttpServlet {
 			session.setAttribute("searchResults", searchResults);
 		}
         
-        else if (action.equals("otherProfile")) {
+        else if (action.equals("activity")) {			
 			UserService userService = new UserService();
-			User otherUser = userService.selectUser(request.getParameter("username"));
+			User user = userService.selectUser(request.getParameter("username"));
 			
 			HttpSession session = request.getSession();
-			session.setAttribute("otherUser", otherUser);
-			session.setAttribute("display", "otherProfile");
-		}
-        
-        else if (action.equals("home")) {
-			HttpSession session = request.getSession();
-			session.setAttribute("display", "wall");
-		}
-        
-        else if (action.equals("profile")) {
-			HttpSession session = request.getSession();
-			session.setAttribute("display", "profile");
-		}
-        
-        else if (action.equals("edit")) {
-			HttpSession session = request.getSession();
-			session.setAttribute("display", "edit");
-		}
-        
-        else if (action.equals("update")) {
-			HttpSession session = request.getSession();
-			User user = (User) session.getAttribute("user");
-			UserService userService = new UserService();
-			user = userService.create(user, request);
-			userService.updateUser(user);
 			session.setAttribute("user", user);
-			session.setAttribute("display", "profile");
+			session.setAttribute("display", "activity");
 		}
         
-        else if (action.equals("post")) {
-			HttpSession session = request.getSession();
-			PostService postService = new PostService();
-			Post post = postService.createPost(request);
-			postService.insertPost(post);
-			session.setAttribute("display", "wall");
+        else if (action.equals("ban")) {
+        	HttpSession session = request.getSession();
+        	
+			UserService userService = new UserService();
+			User user = (User) session.getAttribute("user");
+			userService.banUser(user.getUsername());
+			user = userService.selectUser(user.getUsername());
+			
+			session.setAttribute("user", user);
+		}
+        
+        else if (action.equals("unban")) {			
+        	HttpSession session = request.getSession();
+        	
+			UserService userService = new UserService();
+			User user = (User) session.getAttribute("user");
+			userService.unbanUser(user.getUsername());
+			user = userService.selectUser(user.getUsername());
+			
+			session.setAttribute("user", user);
 		}
         
         else if (action.equals("logout")){
         	HttpSession session = request.getSession();
             session.invalidate();
         }
-		
+        
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/" + nextPage);
         requestDispatcher.forward(request, response);
 	}

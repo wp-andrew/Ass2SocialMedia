@@ -10,8 +10,16 @@ public class LogService {
 
 	private LogDAO logDAO = LogDAOImpl.getInstance();
 	
+	public void insertLog(Log log) {
+		logDAO.insertLog(log);
+	}
+	
 	public List<Log> getNotifications(String username) {
 		return logDAO.getNotifications(username);
+	}
+	
+	public List<Log> getActivity(String username) {
+		return logDAO.getActivity(username);
 	}
 	
 }

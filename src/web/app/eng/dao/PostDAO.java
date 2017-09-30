@@ -15,28 +15,12 @@ public interface PostDAO {
 	public Post selectPost(int id);
 	
 	/**
-	 * Insert a new post into the post database.
+	 * Insert a new post into the post database. Also update the log database.
 	 * 
 	 * @param	The Post to insert
 	 * @return
 	 */
 	public void insertPost(Post post);
-	
-	/**
-	 * Get the last post id in the post database
-	 * 
-	 * @param
-	 * @return
-	 */
-	public int getLastPostId();
-	
-	/**
-	 * Get the username of a poster
-	 * 
-	 * @param	id of the Post
-	 * @return	the username of the poster if there is a Post with the given id, null otherwise
-	 */
-	public String getPoster(int id);
 	
 	/**
 	 * Get all of user's own and friend's posts after user join datetime

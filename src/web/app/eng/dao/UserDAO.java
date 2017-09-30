@@ -53,4 +53,10 @@ public interface UserDAO {
 	 */
 	public List<User> getFriendList(String username);
 	
+	public void banUser(String username);
+	
+	public void unbanUser(String username);
+	
+	public Boolean isFriend(String username1, String username2);
+	
 }

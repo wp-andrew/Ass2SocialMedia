@@ -3,21 +3,22 @@
 <!DOCTYPE html>
 
 <%@ page import="java.util.List" %>
+<%@ page import="web.app.eng.dto.Log" %>
 <%@ page import="web.app.eng.dto.User" %>
-<%@ page import="web.app.eng.service.UserService" %>
+<%@ page import="web.app.eng.service.LogService" %>
 
 <html>
 
 <%
 User user = (User) session.getAttribute("user");
-UserService userService = new UserService();
-List<User> friends = userService.getFriendList(user.getUsername());
+LogService logService = new LogService();
+List<Log> activities = logService.getActivity(user.getUsername());
 %>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>profile</title>
+    <title>activity</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Armata">
@@ -31,11 +32,18 @@ List<User> friends = userService.getFriendList(user.getUsername());
 <body>
     <div>
         <div class="container">
-        	<h2>PROFILE</h2>
-			<form action="control" method="POST">
-				<input type="hidden" name="action" value="edit">
-				<input type="submit" value="Edit Profile">
-			</form>
+        	<h2>ACTIVITY</h2>
+        	<%if (!user.isBanned()) { %>
+				<form action="adminControl" method="POST">
+					<input type="hidden" name="action" value="ban">
+					<input type="submit" value="Ban User">
+				</form>
+			<%} else { %>
+				<form action="adminControl" method="POST">
+					<input type="hidden" name="action" value="unban">
+					<input type="submit" value="Unban User">
+				</form>
+			<%} %>
             <div class="row" style="padding-top:90px;">
                 <div class="col-md-12" style="width:300px;"><img src="assets/img/2.jpg" style="width:240px;height:240px;"></div>
                 <div class="col-md-12" style="width:620px;">
@@ -45,13 +53,23 @@ List<User> friends = userService.getFriendList(user.getUsername());
                     <textarea style="width:600px;">Gender : <%=user.getGender() %></textarea>
                     <textarea style="width:600px;">Email : <%=user.getEmail() %></textarea>
                     <textarea style="width:600px;">DoB : <%=user.getBirthdate() %>/<%=user.getBirthmonth() %>/<%=user.getBirthyear() %></textarea>
-                    Friends:<br/>
-                    <%if (friends != null) { %>
-						<%for (User friend : friends) {%>
-							<%=friend.getFirstname() %> <%=friend.getSurname() %><br/>
+                	
+                	<%if (activities != null) { %>
+						<%for (Log activity : activities) {%>
+							<%if (activity.getPredicate() == 1) { %>
+								<%=activity.getDatetime() %> | <%=activity.getSubject() %> joined UNSWBook<br/>
+							<%} else if (activity.getPredicate() == 2) { %>
+								<%=activity.getDatetime() %> | <%=activity.getSubject() %> sent a friend request to <%=activity.getObject1() %><br/>
+							<%} else if (activity.getPredicate() == 3) { %>
+								<%=activity.getDatetime() %> | <%=activity.getObject1() %> accepted <%=activity.getSubject() %> friend request<br/>
+							<%} else if (activity.getPredicate() == 4) { %>
+								<%=activity.getDatetime() %> | <%=activity.getSubject() %> posted post <%=activity.getObject2() %><br/>
+							<%} else { %>
+								<%=activity.getDatetime() %> | <%=activity.getSubject() %> liked post <%=activity.getObject2() %><br/>
+							<%} %>
 						<%} %>
 					<%} %>
-                </div>
+				</div>
             </div>
         </div>
     </div>

@@ -283,4 +283,62 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		return users;
 	}
 
+	public void banUser(String username) {
+		Connection connection = getConnection();
+		
+		String sql = "UPDATE user_profile SET banned=? WHERE username=?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setBoolean(1, true);
+			preparedStatement.setString(2, username);
+			preparedStatement.executeUpdate();
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void unbanUser(String username) {
+		Connection connection = getConnection();
+		
+		String sql = "UPDATE user_profile SET banned=? WHERE username=?";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setBoolean(1, false);
+			preparedStatement.setString(2, username);
+			preparedStatement.executeUpdate();
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public Boolean isFriend(String username1, String username2) {
+		Connection connection = getConnection();
+		
+		String sql = "SELECT * FROM log WHERE predicate=3 AND ((subject=? AND object1=?) OR (subject=? AND object1=?));";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, username1);
+			preparedStatement.setString(2, username2);
+			preparedStatement.setString(3, username2);
+			preparedStatement.setString(4, username1);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				return true;
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
 }

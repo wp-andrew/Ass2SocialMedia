@@ -1,3 +1,10 @@
+DROP TABLE IF EXISTS admin_profile;
+CREATE TABLE admin_profile (
+	username    varchar(50)  NOT NULL,
+	password    varchar(50)  DEFAULT NULL,
+	PRIMARY KEY (username)
+);
+
 DROP TABLE IF EXISTS user_profile;
 CREATE TABLE user_profile (
 	firstname   varchar(50)  DEFAULT NULL,
@@ -13,7 +20,6 @@ CREATE TABLE user_profile (
 	verified    boolean      DEFAULT 0,
 	PRIMARY KEY (username)
 );
-
 
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (

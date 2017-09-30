@@ -27,6 +27,7 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 		Post post = new Post();
 
 		post.setId(resultSet.getInt("id"));
+		post.setDatetime(resultSet.getString("datetime"));
 		post.setPoster(resultSet.getString("subject"));
 		post.setContent(resultSet.getString("content"));
 		
@@ -67,24 +68,14 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 			preparedStatement.setString(1, post.getContent());
 			preparedStatement.executeUpdate();
 			
-			connection.close();
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@Override
-	public int getLastPostId() {
-		Connection connection = getConnection();
-		
-		String sql = "SELECT max(id) AS id FROM post;";
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			sql = "SELECT max(id) AS id FROM post;";
+			preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-				connection.close();
-				return resultSet.getInt("id");
+				sql = "INSERT INTO log (subject, predicate, object2) VALUES ('" + post.getPoster() + "', "
+						+ Integer.toString(4) + ", '" + Integer.toString(resultSet.getInt("id")) + "');";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.executeUpdate();
 			}
 			
 			connection.close();
@@ -92,31 +83,6 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		return 0;
-	}
-	
-	@Override
-	public String getPoster(int id) {
-		Connection connection = getConnection();
-		
-		String sql = "SELECT * FROM log WHERE predicate=4 AND object2=?;";
-		try {
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			ResultSet resultSet = preparedStatement.executeQuery();
-			if (resultSet.next()) {
-				connection.close();
-				return resultSet.getString("subject");
-			}
-			
-			connection.close();
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		return null;
 	}
 	
 	@Override
@@ -125,8 +91,8 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 		
 		List<Post> posts = new ArrayList<Post>();
 		
-		String sql = "SELECT t1.id, subject, content FROM (post AS t1) "
-				+ "INNER JOIN (SELECT subject, object2 AS id FROM log "
+		String sql = "SELECT t1.id, datetime, subject, content FROM (post AS t1) "
+				+ "INNER JOIN (SELECT datetime, subject, object2 AS id FROM log "
 				+ "WHERE predicate=4 AND datetime > (SELECT datetime FROM log "
 				+ "WHERE predicate=1 AND subject=?) "
 				+ "AND subject IN (SELECT object1 FROM log WHERE predicate=3 AND subject=? "
@@ -142,7 +108,14 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
                 Post post = convertPost(resultSet);
-                posts.add(post);
+                sql = "SELECT count(*) AS likes FROM log WHERE predicate=5 AND object2=?;";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, post.getId());
+                ResultSet resultSet2 = preparedStatement.executeQuery();
+                if (resultSet2.next()) {
+	                post.setLikes(resultSet2.getInt("likes"));
+	                posts.add(post);
+                }
 			}
 			
 			connection.close();

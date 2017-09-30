@@ -1,3 +1,5 @@
+INSERT INTO admin_profile VALUES ('root', 'root');
+
 INSERT INTO user_profile (username) VALUES ('');
 
 INSERT INTO post (content) VALUES ('');

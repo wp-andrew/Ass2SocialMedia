@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import web.app.eng.dao.UserDAO;
 import web.app.eng.dao.support.UserDAOImpl;
+import web.app.eng.dto.Log;
 import web.app.eng.dto.User;
 
 public class UserService {
@@ -106,6 +107,13 @@ public class UserService {
 			userDAO.updateUser(user);
 		}
 		
+		Log log = new Log();
+		log.setSubject(username);
+		log.setPredicate(1);
+		
+		LogService logService = new LogService();
+		logService.insertLog(log);
+		
 		return user;
 	}
 	
@@ -149,6 +157,18 @@ public class UserService {
 	
 	public List<User> getFriendList(String username) {
 		return userDAO.getFriendList(username);
+	}
+	
+	public void banUser(String username) {
+		userDAO.banUser(username);
+	}
+	
+	public void unbanUser(String username) {
+		userDAO.unbanUser(username);
+	}
+	
+	public Boolean isFriend(String username1, String username2) {
+		return userDAO.isFriend(username1, username2);
 	}
 	
 }
