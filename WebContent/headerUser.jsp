@@ -26,14 +26,15 @@ body {
 
 .box {
 	background-color: #FFD833;
-	color: White;
+	color: #8aa4be;
 	font-size: 16px;
 	height: 50px;
 	cursor: pointer;
+
 }
 
 .box:hover {
-	background-color: #FFC833;
+	background-color: #dddddd;
 }
 
 .dropdown {
@@ -46,7 +47,9 @@ body {
 	display: none;
 	position: absolute;
 	background-color: white;
-	width: 400px;
+	border: outset;
+	border-color: cornflowerblue;
+	width: 200px;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
 }
@@ -54,6 +57,8 @@ body {
 .dropdown:hover .dropdown-content {
 	display: block;
 }
+
+
 </style>
 
 <%
@@ -62,9 +67,29 @@ LogService logService = new LogService();
 List<Log> notifications = logService.getNotifications(user.getUsername());
 %>
 
+
+
+
+
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 	<title>headerUser</title>
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+	<link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Armata">
+	<link rel="stylesheet" href="assets/css/MUSA_timeline.css">
+	<link rel="stylesheet" href="assets/css/MUSA_timeline1.css">
+	<link rel="stylesheet" href="assets/css/Navigation-with-Search1.css">
+	<link rel="stylesheet" href="assets/css/Responsive-feedback-form.css">
+	<link rel="stylesheet" href="assets/css/Responsive-feedback-form1.css">
+	<link rel="stylesheet" href="assets/css/styles.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body>
@@ -77,10 +102,12 @@ List<Log> notifications = logService.getNotifications(user.getUsername());
 				<option value="gender">Gender</option>
 				<option value="dob">DoB</option>
 			</select>
-			<input name="searchValue" class="box" type="text">
-			<input class="box" type="submit" value="Search">
+			<input name="searchValue" class="search-field" type="text">
+			<button class="icon" type="submit" value="Search"><i class="glyphicon glyphicon-search"></i></button>
+
+
 		</form>
-		<form class="inline-form" action="control" method="POST">
+		<form class="inline-form" action="control" method="POST" style="padding-left: 500px">
 			<input type="hidden" name="action" value="profile">
 			<input class="box" type="submit" value="Profile">
 		</form>
@@ -88,9 +115,14 @@ List<Log> notifications = logService.getNotifications(user.getUsername());
 			<input type="hidden" name="action" value="home">
 			<input class="box" type="submit" value="Home">
 		</form>
+
+
+
+
 		<div class="dropdown">
 			<button class="box">Notifications</button>
 			<div class="dropdown-content">
+
 				<%if (notifications != null) { %>
 					<%int count = 0; %>
 					<%for (Log notification : notifications) {%>
