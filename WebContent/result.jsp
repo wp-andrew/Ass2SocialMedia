@@ -52,12 +52,14 @@ div.panel {
 	<div class="container">
 		<h2>RESULT</h2>
 		<ul class="list-group">
-			<%for (User result : results) {%>
-				<%if (!result.getUsername().equals(user.getUsername())) { %>
-					<li class="list-group-item">
-					<%=result.getUsername() %><br/>
-					<%=result.getFirstname() %> <%=result.getSurname() %>
-					</li>
+			<%if (results != null) { %>
+				<%for (User result : results) {%>
+					<%if (!result.getUsername().equals(user.getUsername())) { %>
+						<li class="list-group-item">
+						<%=result.getUsername() %><br/>
+						<%=result.getFirstname() %> <%=result.getSurname() %>
+						</li>
+					<%} %>
 				<%} %>
 			<%} %>
 		</ul>

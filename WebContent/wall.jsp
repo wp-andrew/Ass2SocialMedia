@@ -29,11 +29,13 @@ List<Post> posts = postService.getPostList(user.getUsername());
 	<div class="container">
 		<h2>WALL</h2>
 		<ul class="list-group">
-			<%for (Post post : posts) {%>
-				<li class="list-group-item">
-				<%=post.getPoster() %><br/>
-				<%=post.getContent() %>
-				</li>
+			<%if (posts != null) { %>
+				<%for (Post post : posts) {%>
+					<li class="list-group-item">
+					<%=post.getPoster() %><br/>
+					<%=post.getContent() %>
+					</li>
+				<%} %>
 			<%} %>
 		</ul>
 	</div>

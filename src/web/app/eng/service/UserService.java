@@ -47,6 +47,38 @@ public class UserService {
 	    return user;
 	}
 	
+	public User create(User user, HttpServletRequest request) {		
+		if (request.getParameter("firstname") != null && !request.getParameter("firstname").equals("")) {
+			user.setFirstname(request.getParameter("firstname"));
+		}
+		if (request.getParameter("surname") != null && !request.getParameter("surname").equals("")) {
+			user.setSurname(request.getParameter("surname"));
+		}
+		if (request.getParameter("email") != null && !request.getParameter("email").equals("")) {
+			user.setEmail(request.getParameter("email"));
+		}
+		if (request.getParameter("username") != null && !request.getParameter("username").equals("")) {
+			user.setUsername(request.getParameter("username"));
+		}
+		if (request.getParameter("password") != null && !request.getParameter("password").equals("")) {
+			user.setPassword(request.getParameter("password"));
+		}
+		if (request.getParameter("birthdate") != null && !request.getParameter("birthdate").equals("")) {
+			user.setBirthdate(Integer.parseInt(request.getParameter("birthdate")));
+		}
+		if (request.getParameter("birthmonth") != null && !request.getParameter("birthmonth").equals("")) {
+			user.setBirthmonth(Integer.parseInt(request.getParameter("birthmonth")));
+		}
+		if (request.getParameter("birthyear") != null && !request.getParameter("birthyear").equals("")) {
+			user.setBirthyear(Integer.parseInt(request.getParameter("birthyear")));
+		}
+		if (request.getParameter("gender") != null && !request.getParameter("gender").equals("")) {
+			user.setGender(request.getParameter("gender"));
+		}
+		
+	    return user;
+	}
+	
 	public boolean register(User user) throws MessagingException {
 		// verify that username is unique
 		User userExist = userDAO.selectUser(user.getUsername());
@@ -97,6 +129,10 @@ public class UserService {
 	
 	public User selectUser(String username) {
 		return userDAO.selectUser(username);
+	}
+	
+	public void updateUser(User user) {
+		userDAO.updateUser(user);
 	}
 	
 	public List<User> searchUsers(String firstname, String surname) {

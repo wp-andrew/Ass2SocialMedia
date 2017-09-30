@@ -192,24 +192,24 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		String sql = "SELECT * FROM user_profile WHERE ";
 		int count = 0;
 		if (birthdate > 0) {
-			sql = sql + "birthdate='" + birthdate + "'";
+			sql = sql + "birthdate=" + birthdate;
 			count++;
 		}
 		if (birthmonth > 0) {
 			if (count > 0) {
-				sql = sql + " AND birthmonth='" + birthmonth + "'";
+				sql = sql + " AND birthmonth=" + birthmonth;
 			}
 			else {
-				sql = sql + "birthmonth='" + birthmonth + "'";
+				sql = sql + "birthmonth=" + birthmonth;
 			}
 			count++;
 		}
 		if (birthyear > 0) {
 			if (count > 0) {
-				sql = sql + " AND birthyear='" + birthyear + "'";
+				sql = sql + " AND birthyear=" + birthyear;
 			}
 			else {
-				sql = sql + "birthyear='" + birthyear + "'";
+				sql = sql + "birthyear=" + birthyear;
 			}
 			count++;
 		}

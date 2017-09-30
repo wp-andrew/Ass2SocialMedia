@@ -46,8 +46,10 @@ List<User> friends = userService.getFriendList(user.getUsername());
                     <textarea style="width:600px;">Email : <%=user.getEmail() %></textarea>
                     <textarea style="width:600px;">DoB : <%=user.getBirthdate() %>/<%=user.getBirthmonth() %>/<%=user.getBirthyear() %></textarea>
                     <textarea style="width:600px;">
-					<%for (User friend : friends) {%>
-						<%=friend.getFirstname() %> <%=friend.getSurname() %>
+                    <%if (friends != null) { %>
+						<%for (User friend : friends) {%>
+							<%=friend.getFirstname() %> <%=friend.getSurname() %>
+						<%} %>
 					<%} %>
 					</textarea>
                 </div>

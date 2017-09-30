@@ -17,7 +17,7 @@ User user = (User) session.getAttribute("user");
 
 <body>
 	<h1>Edit Profile</h1>
-	<%=user.getUsername() %><br/><br/>
+	<h2><%=user.getUsername() %></h2>
 	
 	<form action="control" method="POST">
 		<input type="hidden" name="action" value="update">
@@ -30,26 +30,46 @@ User user = (User) session.getAttribute("user");
 		<input type="text" name="email" placeholder="New Email address" size="45"><br/>
 		<input type="password" name="password" placeholder="New password" size="45"><br/><br/>
 		
-		DoB: <%=user.getBirthdate() %>/<%=user.getBirthmonth() %>/<%=user.getBirthyear() %><br/>
+		Date of Birth<br/>
 		<select name="birthdate">
 			<%for (int i=31; i>=1; i--) { %>
-				<option value="<%=i %>"><%=i %></option>
+				<%if (i == user.getBirthdate()) { %>
+					<option value="<%=i %>" selected><%=i %></option>
+				<%} else { %>
+					<option value="<%=i %>"><%=i %></option>
+				<%} %>
 			<%} %>
 		</select><!--
 		--><select name="birthmonth">
 			<%for (int i=12; i>=1; i--) { %>
-				<option value="<%=i %>"><%=i %></option>
+				<%if (i == user.getBirthmonth()) { %>
+					<option value="<%=i %>" selected><%=i %></option>
+				<%} else { %>
+					<option value="<%=i %>"><%=i %></option>
+				<%} %>
 			<%} %>
 		</select><!--
 		--><select name="birthyear">
 			<%for (int i=2017; i>=1905; i--) { %>
-				<option value="<%=i %>"><%=i %></option>
+				<%if (i == user.getBirthyear()) { %>
+					<option value="<%=i %>" selected><%=i %></option>
+				<%} else { %>
+					<option value="<%=i %>"><%=i %></option>
+				<%} %>
 			<%} %>
 		</select><br/><br/>
 		
-		<%=user.getGender() %><br/>
-		<input type="radio" name="gender" value="male">Male
-		<input type="radio" name="gender" value="female">Female<br/><br/>
+		Gender<br/>
+		<%if (user.getGender().equals("male")) { %>
+			<input type="radio" name="gender" value="male" checked>Male
+		<%} else { %>
+			<input type="radio" name="gender" value="male">Male
+		<%} %>
+		<%if (user.getGender().equals("female")) { %>
+			<input type="radio" name="gender" value="female" checked>Female
+		<%} else { %>
+			<input type="radio" name="gender" value="female">Female
+		<%} %><br/><br/>
 		
 		<input type="submit" value="Save">
 	</form>

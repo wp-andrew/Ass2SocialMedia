@@ -105,7 +105,15 @@ public class ControlServlet extends HttpServlet {
 				searchResults = userService.searchUsers(searchValue);
 			}
 			else {
-				searchResults = null;
+				try {
+					int birthdate = Integer.parseInt(searchValue.substring(0, 2));
+					int birthmonth = Integer.parseInt(searchValue.substring(3, 5));
+					int birthyear = Integer.parseInt(searchValue.substring(6, 10));
+					searchResults = userService.searchUsers(birthdate, birthmonth, birthyear);
+				}
+				catch (NumberFormatException e) {
+					searchResults = null;
+				}
 			}
 			
 			HttpSession session = request.getSession();
@@ -126,6 +134,11 @@ public class ControlServlet extends HttpServlet {
 		}
         else if (action.equals("update")) {
 			HttpSession session = request.getSession();
+			User user = (User) session.getAttribute("user");
+			UserService userService = new UserService();
+			user = userService.create(user, request);
+			userService.updateUser(user);
+			session.setAttribute("user", user);
 			session.setAttribute("display", "profile");
 		}
         else if (action.equals("logout")){
