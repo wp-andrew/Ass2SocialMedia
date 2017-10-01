@@ -99,9 +99,9 @@ List<Post> posts = postService.getPostList(user.getUsername());
 				<%for (Post post : posts) {%>
 				<li class="list-group-item">
 					<textarea class="input-lg" readonly="" style="min-height:200px;min-width:500px;height:0px;max-height:none;">
-<%=post.getPoster() %><br/>
-<%=post.getDatetime() %><br/>
-<%=post.getContent() %><br/>
+<%=post.getPoster() %>
+<%=post.getDatetime() %>
+<%=post.getContent() %>
 <%=post.getLikes() %>&#128077;
 					</textarea>
 				</li>
