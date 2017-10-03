@@ -96,16 +96,29 @@ List<Post> posts = postService.getPostList(user.getUsername());
 
 			<div class="col-md-6" style="padding-top:90px;">
 				<%if (posts != null) { %>
-				<%for (Post post : posts) {%>
-				<li class="list-group-item">
-					<textarea class="input-lg" readonly="" style="min-height:200px;min-width:500px;height:0px;max-height:none;">
+					<%for (Post post : posts) {%>
+						<li class="list-group-item">
+							<textarea class="input-lg" readonly="" style="min-height:200px;min-width:500px;height:0px;max-height:none;">
 <%=post.getPoster() %>
 <%=post.getDatetime() %>
 <%=post.getContent() %>
 <%=post.getLikes() %>&#128077;
-					</textarea>
-				</li>
-				<%} %>
+							</textarea>
+							<%if (!post.isLiked()) { %>
+								<form action="control" method="POST">
+									<input type="hidden" name="action" value="like">
+									<input type="hidden" name="id" value="<%=post.getId() %>">
+									<input type="submit" value="Like">
+								</form>
+							<%} else { %>
+								<form action="control" method="POST">
+									<input type="hidden" name="action" value="unlike">
+									<input type="hidden" name="id" value="<%=post.getId() %>">
+									<input type="submit" value="Unlike">
+								</form>
+							<%} %>
+						</li>
+					<%} %>
 				<%} %>
 			</div>
 

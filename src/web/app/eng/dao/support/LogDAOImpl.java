@@ -36,9 +36,68 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 	}
 	
 	@Override
-	public Log selectLog(int id) {
-		// TODO Auto-generated method stub
+	public Log selectLog(Log log) {
+		Connection connection = getConnection();
+		
+		String sql = "";
+		switch (log.getPredicate()) {
+		case 1:	// 'subject' joined UNSWBook
+			sql = "SELECT * FROM log WHERE subject='" + log.getSubject() + "' AND predicate=1;";
+			break;
+		case 2:	// 'subject' sent a friend request to 'object1'
+		case 3:	// 'subject's friend request is accepted by 'object1'
+			sql = "SELECT * FROM log WHERE subject='" + log.getSubject() + "' AND predicate=" + log.getPredicate() + " AND object1='" + log.getObject1() + "';";
+			break;
+		case 4:	// 'subject' create a post with post id 'object2'
+		case 5:	// 'subject' likes a post with post id 'object2'
+			sql = "SELECT * FROM log WHERE subject='" + log.getSubject() + "' AND predicate=" + log.getPredicate() + " AND object2=" + log.getObject2() + ";";
+			break;
+		}
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				log = convertLog(resultSet);
+				connection.close();
+				return log;
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return null;
+	}
+	
+	@Override
+	public void deleteLog(Log log) {
+		Connection connection = getConnection();
+		
+		String sql = "";
+		switch (log.getPredicate()) {
+		case 1:
+			sql = "DELETE FROM log WHERE subject='" + log.getSubject() + "' AND predicate=1;";
+			break;
+		case 2:
+		case 3:
+			sql = "DELETE FROM log WHERE subject='" + log.getSubject() + "' AND predicate=" + log.getPredicate() + " AND object1='" + log.getObject1() + "';";
+			break;
+		case 4:
+		case 5:
+			sql = "DELETE FROM log WHERE subject='" + log.getSubject() + "' AND predicate=" + log.getPredicate() + " AND object2=" + log.getObject2() + ";";
+			break;
+		}
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.executeUpdate();
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

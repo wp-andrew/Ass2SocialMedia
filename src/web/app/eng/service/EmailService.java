@@ -1,5 +1,11 @@
 package web.app.eng.service;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.mail.Authenticator;
@@ -14,6 +20,21 @@ import javax.mail.internet.MimeMessage.RecipientType;
 import web.app.eng.dto.User;
 
 public class EmailService {
+	
+    private static String getIPv4Address(String networkInterfaceName) throws SocketException {
+        Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+        for (NetworkInterface networkInterface : Collections.list(networkInterfaces)) {
+        	if (networkInterface.getName().equals(networkInterfaceName)) {
+        		Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+        		for (InetAddress inetAddress : Collections.list(inetAddresses)) {
+        			if (inetAddress instanceof Inet4Address) {
+        				return inetAddress.getHostAddress();
+        			}
+        		}
+        	}
+        }
+        return "";
+    }
 	
     public static void sendEmail(String toAddress, String title, String content) throws MessagingException {
         final Properties properties = new Properties();
@@ -44,20 +65,44 @@ public class EmailService {
         Transport.send(mimeMessage);
     }
     
-    public static void sendVerificationEmail(User user) throws MessagingException {
+    public static void sendVerificationEmail(User user) throws MessagingException, SocketException {
+    	String serverIPv4Address = getIPv4Address("wlan0");
         String to = user.getEmail();
         String title = "UNSWBook Account: Email address verification";
         String content = "<p>" +
 				"This is an automatically generated email from UNSWBook.<br/>" +
 				"<br/>" +
 				"--------------------------------------------------<br/>" +
-				"Hi " + user.getFirstname() + " " + user.getSurname() + "<br/>" +
+				"Hi " + user.getFirstname() + " " + user.getSurname() + ",<br/>" +
 				"<br/>" +
 				"Thank you for registering for a UNSWBook Account.<br/>" +
 				"<br/>" +
-				"Help us secure your account by verifying your email \n" +
-				"<a href=\"http://localhost:8080/Ass2SocialMedia/control?username=" + user.getUsername() + "&action=confirm" + "\" target=\"_top\">" +
-				"http://localhost:8080/Ass2SocialMedia/control?username=" + user.getUsername() + "&action=confirm" +
+				"Help us secure your account by verifying your email.<br/>" +
+				"<a href=\"http://" + serverIPv4Address + ":8080/Ass2SocialMedia/control?action=confirm" + "&username=" + user.getUsername() + "\" target=\"_top\">" +
+				"Confirm Email Address" +
+				"</a><br/>" +
+				"<br/>" +
+				"If you do not know why you have received this email, please delete this email.<br/>" +
+				"<br/>" +
+				"--------------------------------------------------<br/>" +
+				"You cannot reply to this email address." +
+				"</p>";
+        sendEmail(to, title, content);
+    }
+    
+    public static void sendFriendRequest(User user, String username, String email) throws MessagingException, SocketException {
+    	String serverIPv4Address = getIPv4Address("wlan0");
+    	String to = email;
+        String title = user.getFirstname() + " " + user.getSurname() + " sent you a friend request on UNSWBook";
+        String content = "<p>" +
+				"This is an automatically generated email from UNSWBook.<br/>" +
+				"<br/>" +
+				"--------------------------------------------------<br/>" +
+				"<br/>" +
+				user.getFirstname() + " " + user.getSurname() + " sent you a friend request on UNSWBook.<br/>" +
+				"<a href=\"http://" + serverIPv4Address + ":8080/Ass2SocialMedia/control?action=acceptFriend" + 
+				"&subject=" + user.getUsername() + "&object1=" + username + "\" target=\"_top\">" +
+				"Accept Friend Request" +
 				"</a><br/>" +
 				"<br/>" +
 				"If you do not know why you have received this email, please delete this email.<br/>" +

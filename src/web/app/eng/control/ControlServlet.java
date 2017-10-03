@@ -1,10 +1,8 @@
 package web.app.eng.control;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
-import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -25,7 +23,7 @@ import web.app.eng.service.UserService;
 @WebServlet(urlPatterns="/control", displayName="ControlServlet")
 public class ControlServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -41,47 +39,51 @@ public class ControlServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doPost(request,response);
 	}
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		HttpSession session = request.getSession();
+		
         String action = new String("");
-        if (request.getParameter("action") != null){
+        if (request.getParameter("action") != null) {
             action = request.getParameter("action");
         }
-		
-        String nextPage = "home.jsp";
+        
         if (action.equals("registration")) {
-            UserService userService = new UserService();
-            User user = userService.create(request);
             try {
-                if (!userService.register(user)) {
-                	nextPage = "registrationError.jsp";
-                };
-            }
-            catch (MessagingException e) {
-                e.printStackTrace();
-            }
-            if (!nextPage.equals("registrationError.jsp"))
-            	nextPage = "confirmEmail.jsp";
+                UserService userService = new UserService();
+                User user = userService.create(request);
+				userService.register(user);
+				
+				session.setAttribute("display", "confirmEmail");
+			}
+            catch (Exception e) {
+            	request.setAttribute("error", e.getMessage());
+			}
 		}
+        
         else if (action.equals("confirm")){
-            UserService userService = new UserService();
-            userService.confirmEmail(request.getParameter("username"));
-            nextPage = "registrationComplete.jsp";
+            try {
+            	UserService userService = new UserService();
+            	userService.confirmEmail(request.getParameter("username"));
+            	
+                session.setAttribute("display", "registrationComplete");
+            }
+            catch (ServiceException e) {
+            	request.setAttribute("error", e.getMessage());
+            }
         }
         
 		else if (action.equals("login")) {
-			UserService userService = new UserService();
-			User user = userService.create(request);
 			try {
+				UserService userService = new UserService();
+				User user = userService.create(request);
 				userService.login(user.getUsername(), user.getPassword());
 				user = userService.selectUser(user.getUsername());
 				
-				HttpSession session = request.getSession();
-				session.setAttribute("login", "true");
 				session.setAttribute("user", user);
 				session.setAttribute("display", "wall");
 				session.setMaxInactiveInterval(60*60);
@@ -90,11 +92,30 @@ public class ControlServlet extends HttpServlet {
 				request.setAttribute("error", e.getMessage());
 			}
 		}
-
-        else if (action.equals("search")) {			
-			UserService userService = new UserService();
+        
+        else if (action.equals("acceptFriend")){
+        	try {
+        		UserService userService = new UserService();
+        		userService.acceptFriend(request);
+        		
+        		request.setAttribute("username", request.getParameter("subject"));
+        		session.setAttribute("display", "userAcceptFriend");
+        	}
+			catch (ServiceException e) {
+				request.setAttribute("error", e.getMessage());
+			}
+        }
+        
+        // All actions past this requires login
+		else if (request.getSession().getAttribute("user") == null) {
+			
+		}
+        
+		else if (action.equals("search")) {
 			String tagName = request.getParameter("tagName");
 			String searchValue = request.getParameter("searchValue");
+			
+			UserService userService = new UserService();
 			List<User> searchResults;
 			if (tagName.equals("firstname")) {
 				searchResults = userService.searchUsers(searchValue, "");
@@ -117,59 +138,100 @@ public class ControlServlet extends HttpServlet {
 				}
 			}
 			
-			HttpSession session = request.getSession();
-			session.setAttribute("display", "result");
 			session.setAttribute("searchResults", searchResults);
+			session.setAttribute("display", "result");
 		}
         
         else if (action.equals("otherProfile")) {
+        	String username = request.getParameter("username");
+        	
 			UserService userService = new UserService();
-			User otherUser = userService.selectUser(request.getParameter("username"));
+			User otherUser = userService.selectUser(username);
 			
-			HttpSession session = request.getSession();
 			session.setAttribute("otherUser", otherUser);
 			session.setAttribute("display", "otherProfile");
 		}
         
+        else if (action.equals("addFriend")) {
+			try {
+				User user = (User) session.getAttribute("user");
+				UserService userService = new UserService();
+				userService.addFriend(user, request);
+				
+				session.setAttribute("display", "otherProfile");
+			}
+			catch (ServiceException e) {
+				request.setAttribute("error", e.getMessage());
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+        
         else if (action.equals("home")) {
-			HttpSession session = request.getSession();
 			session.setAttribute("display", "wall");
 		}
         
         else if (action.equals("profile")) {
-			HttpSession session = request.getSession();
 			session.setAttribute("display", "profile");
 		}
         
-        else if (action.equals("edit")) {
-			HttpSession session = request.getSession();
-			session.setAttribute("display", "edit");
+        else if (action.equals("editProfile")) {
+			session.setAttribute("display", "editProfile");
 		}
         
         else if (action.equals("update")) {
-			HttpSession session = request.getSession();
 			User user = (User) session.getAttribute("user");
+			
 			UserService userService = new UserService();
 			user = userService.create(user, request);
 			userService.updateUser(user);
+			
 			session.setAttribute("user", user);
 			session.setAttribute("display", "profile");
 		}
         
         else if (action.equals("post")) {
-			HttpSession session = request.getSession();
 			PostService postService = new PostService();
 			Post post = postService.createPost(request);
 			postService.insertPost(post);
+			
 			session.setAttribute("display", "wall");
 		}
         
+        else if (action.equals("like")) {
+        	try {
+	        	User user = (User) session.getAttribute("user");
+	        	
+				PostService postService = new PostService();
+				postService.likePost(user, Integer.parseInt(request.getParameter("id")));
+				
+				session.setAttribute("display", "wall");
+	    	}
+	    	catch (ServiceException e) {
+	    		request.setAttribute("error", e.getMessage());
+	    	}
+		}
+        
+        else if (action.equals("unlike")) {
+        	try {
+	        	User user = (User) session.getAttribute("user");
+	        	
+				PostService postService = new PostService();
+				postService.unlikePost(user, Integer.parseInt(request.getParameter("id")));
+				
+				session.setAttribute("display", "wall");
+        	}
+        	catch (ServiceException e) {
+        		request.setAttribute("error", e.getMessage());
+        	}
+		}
+        
         else if (action.equals("logout")){
-        	HttpSession session = request.getSession();
             session.invalidate();
         }
 		
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/" + nextPage);
+        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/home.jsp");
         requestDispatcher.forward(request, response);
 	}
 

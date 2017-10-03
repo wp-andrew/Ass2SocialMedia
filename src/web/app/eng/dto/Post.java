@@ -6,6 +6,7 @@ public class Post {
 	private String poster;
 	private String content;
 	private int likes;
+	private boolean liked;
 	
 	public int getId() {
 		return id;
@@ -46,4 +47,13 @@ public class Post {
 	public void setLikes(int likes) {
 		this.likes = likes;
 	}
+	
+	public boolean isLiked() {
+		return liked;
+	}
+
+	public void setLiked(boolean liked) {
+		this.liked = liked;
+	}
+	
 }

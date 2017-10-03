@@ -92,30 +92,40 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 		List<Post> posts = new ArrayList<Post>();
 		
 		String sql = "SELECT t1.id, datetime, subject, content FROM (post AS t1) "
-				+ "INNER JOIN (SELECT datetime, subject, object2 AS id FROM log "
-				+ "WHERE predicate=4 AND datetime > (SELECT datetime FROM log "
-				+ "WHERE predicate=1 AND subject=?) "
-				+ "AND subject IN (SELECT object1 FROM log WHERE predicate=3 AND subject=? "
-				+ "UNION SELECT subject FROM log WHERE predicate=3 AND object1=? "
-				+ "UNION SELECT ?)) AS t2 ON t1.id = t2.id ORDER BY t1.id DESC;";
+				+ "INNER JOIN ((SELECT t2.datetime, subject, object2 AS id FROM log AS t2, "
+				+ "(SELECT datetime, object1 AS friend FROM log WHERE predicate=3 AND subject=? "
+				+ "UNION SELECT datetime, subject AS friend FROM log WHERE predicate=3 AND object1=?) AS t3 "
+				+ "WHERE t2.subject=t3.friend AND predicate=4 AND t2.datetime>t3.datetime) "
+				+ "UNION (SELECT datetime, subject, object2 AS id FROM log WHERE subject=? AND predicate=4)) "
+				+ "AS t4 ON t1.id = t4.id ORDER BY t1.id DESC;";
 		
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, username);
 			preparedStatement.setString(2, username);
 			preparedStatement.setString(3, username);
-			preparedStatement.setString(4, username);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
                 Post post = convertPost(resultSet);
+                
                 sql = "SELECT count(*) AS likes FROM log WHERE predicate=5 AND object2=?;";
                 preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setInt(1, post.getId());
                 ResultSet resultSet2 = preparedStatement.executeQuery();
                 if (resultSet2.next()) {
 	                post.setLikes(resultSet2.getInt("likes"));
-	                posts.add(post);
                 }
+                
+                sql = "SELECT * FROM log WHERE predicate=5 AND subject=? AND object2=?;";
+                preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setString(1, username);
+                preparedStatement.setInt(2, post.getId());
+                ResultSet resultSet3 = preparedStatement.executeQuery();
+                if (resultSet3.next()) {
+	                post.setLiked(true);
+                }
+                
+                posts.add(post);
 			}
 			
 			connection.close();

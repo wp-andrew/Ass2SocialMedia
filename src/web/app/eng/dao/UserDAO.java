@@ -14,6 +14,8 @@ public interface UserDAO {
 	 */
 	public User selectUser(String username);
 	
+	public User selectUserByUsernameAndEmail(String username, String email);
+	
 	/**
 	 * Tries to locate a user with the given username and password
 	 * 

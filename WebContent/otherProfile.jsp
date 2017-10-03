@@ -14,6 +14,7 @@ User user = (User) session.getAttribute("user");
 User otherUser = (User) session.getAttribute("otherUser");
 UserService userService = new UserService();
 Boolean isFriend = userService.isFriend(user.getUsername(), otherUser.getUsername());
+Boolean isFriendRequestSent = userService.isFriendRequestSent(user.getUsername(), otherUser.getUsername());
 %>
 
 <head>
@@ -34,11 +35,17 @@ Boolean isFriend = userService.isFriend(user.getUsername(), otherUser.getUsernam
     <div>
         <div class="container">
         	<h2>OTHER PROFILE</h2>
-        	<%if (!isFriend) { %>
-				<form action="adminControl" method="POST">
-					<input type="hidden" name="action" value="addFriend">
-					<input type="submit" value="Add Friend">
-				</form>
+			<%if (!isFriend) { %>
+			    <%if (!isFriendRequestSent) { %>
+					<form action="control" method="POST">
+						<input type="hidden" name="action" value="addFriend">
+						<input type="hidden" name="username" value="<%=otherUser.getUsername() %>">
+						<input type="hidden" name="email" value="<%=otherUser.getEmail() %>">
+						<input type="submit" value="Add Friend">
+					</form>
+				<%} else { %>
+					<h3>Friend Request Sent</h3>
+				<%} %>
 			<%} else { %>
 				<h3>Friends</h3>
 			<%} %>

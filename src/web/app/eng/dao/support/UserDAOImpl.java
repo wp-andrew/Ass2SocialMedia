@@ -45,7 +45,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 	public User selectUser(String username) {
 		Connection connection = getConnection();
 		
-		String sql = "SELECT * FROM user_profile WHERE username = ?";
+		String sql = "SELECT * FROM user_profile WHERE username=?;";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, username);
@@ -66,10 +66,35 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 	}
 	
 	@Override
+	public User selectUserByUsernameAndEmail(String username, String email) {
+		Connection connection = getConnection();
+		
+		String sql = "SELECT * FROM user_profile WHERE username=? AND email=?;";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, username);
+			preparedStatement.setString(2, email);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+                User user = convertUser(resultSet);
+				connection.close();
+				return user;
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+	
+	@Override
 	public User selectUser(String username, String password) {
 		Connection connection = getConnection();
 		
-		String sql = "SELECT * FROM user_profile WHERE username = ? AND password = ?";
+		String sql = "SELECT * FROM user_profile WHERE username=? AND password=?;";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, username);

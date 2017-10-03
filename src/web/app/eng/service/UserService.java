@@ -1,5 +1,6 @@
 package web.app.eng.service;
 
+import java.net.SocketException;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -80,11 +81,12 @@ public class UserService {
 	    return user;
 	}
 	
-	public boolean register(User user) throws MessagingException {
+	public void register(User user) 
+			throws MessagingException, SocketException {
 		// verify that username is unique
 		User userExist = userDAO.selectUser(user.getUsername());
 		if (userExist != null) {
-			return false;
+			throw new ServiceException("The username is already taken!");
 		}
 		
 		user.setBanned(false);
@@ -93,16 +95,18 @@ public class UserService {
 		userDAO.insertUser(user);
 		
 		EmailService.sendVerificationEmail(user);
-		
-		return true;
 	}
 	
-	public User confirmEmail(String username) {
+	public void confirmEmail(String username) {
 		User user = userDAO.selectUser(username);
 		if (user == null) {
-			return null;
+			throw new ServiceException("Invalid link!");
 		}
-		else if (!user.isVerified()) {
+		
+		if (user.isVerified()) {
+			throw new ServiceException("Email address has already been confirmed!");
+		}
+		else {
 			user.setVerified(true);
 			userDAO.updateUser(user);
 		}
@@ -113,11 +117,10 @@ public class UserService {
 		
 		LogService logService = new LogService();
 		logService.insertLog(log);
-		
-		return user;
 	}
 	
-	public void login(String username, String password) throws ServiceException {
+	public void login(String username, String password) 
+			throws ServiceException {
 		User user = userDAO.selectUser(username);
 		if (user == null) {
 			throw new ServiceException("Specified username does not exist!");
@@ -133,6 +136,53 @@ public class UserService {
 		if (user == null) {
 			throw new ServiceException("Incorrect password for " + username + "!");
 		}
+	}
+	
+	public void addFriend(User user, HttpServletRequest request) 
+			throws MessagingException, ServiceException, SocketException {
+		String username = request.getParameter("username");
+		String email = request.getParameter("email");
+		
+		if (userDAO.selectUserByUsernameAndEmail(username, email) == null) {
+			throw new ServiceException("Invalid link!");
+		}
+		
+		Log log = new Log();
+		log.setSubject(user.getUsername());
+		log.setPredicate(2);
+		log.setObject1(username);
+		
+		LogService logService = new LogService();
+    	if (logService.selectLog(log) != null) {
+    		throw new ServiceException("You have already sent a friend request to " + username + "!");
+    	}
+    	else {
+    		EmailService.sendFriendRequest(user, username, email);
+    		logService.insertLog(log);
+    	}
+	}
+	
+	public void acceptFriend(HttpServletRequest request) 
+			throws ServiceException {
+    	String subject = request.getParameter("subject");
+    	String object1 = request.getParameter("object1");
+    	
+    	if (userDAO.selectUser(subject) == null || userDAO.selectUser(object1) == null) {
+    		throw new ServiceException("Invalid link!");
+    	}
+    	
+    	Log log = new Log();
+        log.setSubject(subject);
+        log.setPredicate(3);
+        log.setObject1(object1);
+        
+    	LogService logService = new LogService();
+    	if (logService.selectLog(log) != null) {
+    		throw new ServiceException("You have already accepted " + subject + "'s friend request!");
+    	}
+    	else {
+    		logService.insertLog(log);
+    	}
 	}
 	
 	public User selectUser(String username) {
@@ -169,6 +219,21 @@ public class UserService {
 	
 	public Boolean isFriend(String username1, String username2) {
 		return userDAO.isFriend(username1, username2);
+	}
+	
+	public Boolean isFriendRequestSent(String username1, String username2) {
+    	Log log = new Log();
+        log.setSubject(username1);
+        log.setPredicate(2);
+        log.setObject1(username2);
+        
+    	LogService logService = new LogService();
+    	if (logService.selectLog(log) != null) {
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
 	}
 	
 }

@@ -33,7 +33,7 @@ List<User> friends = userService.getFriendList(user.getUsername());
         <div class="container">
         	<h2>PROFILE</h2>
 			<form action="control" method="POST">
-				<input type="hidden" name="action" value="edit">
+				<input type="hidden" name="action" value="editProfile">
 				<input type="submit" value="Edit Profile">
 			</form>
             <div class="row" style="padding-top:90px;">

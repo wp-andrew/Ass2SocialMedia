@@ -4,15 +4,18 @@
 
 <html>
 
+<%
+String username = (String) request.getAttribute("username");
+%>
+
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title>registrationComplete</title>
+	<title>userAcceptFriend</title>
 </head>
 
 <body>
-	<h1>Registration Complete</h1>
-	You've been registered to UNSWBook.<br/>
-	Please login to continue.
+	<h1>Friend Request Accepted</h1>
+	You have accepted <%=username %>'s friend request!<br/>
 </body>
 
 </html>

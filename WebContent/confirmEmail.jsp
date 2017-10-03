@@ -10,8 +10,6 @@
 </head>
 
 <body>
-	<img src="https://www.unsw.edu.au/sites/default/files/UNSW_0.png" alt="UNSW Sydney">
-	<jsp:include page="headerLogin.jsp"/>
 	<h1>Confirm Email</h1>
 	Thank you for registering to UNSWBook!<br/>
 	We've just sent a confirmation email to the address you provided.<br/>

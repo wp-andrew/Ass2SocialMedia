@@ -10,8 +10,16 @@ public class LogService {
 
 	private LogDAO logDAO = LogDAOImpl.getInstance();
 	
+	public Log selectLog(Log log) {
+		return logDAO.selectLog(log);
+	}
+	
 	public void insertLog(Log log) {
 		logDAO.insertLog(log);
+	}
+	
+	public void deleteLog(Log log) {
+		logDAO.deleteLog(log);
 	}
 	
 	public List<Log> getNotifications(String username) {
