@@ -3,7 +3,6 @@
 <!DOCTYPE html>
 
 <%@ page import="java.util.List" %>
-<%@ page import="web.app.eng.dto.Log" %>
 <%@ page import="web.app.eng.dto.User" %>
 <%@ page import="web.app.eng.service.UserService" %>
 
@@ -11,16 +10,14 @@
 
 <%
 User user = (User) session.getAttribute("user");
-User otherUser = (User) session.getAttribute("otherUser");
 UserService userService = new UserService();
-Boolean isFriend = userService.isFriend(user.getUsername(), otherUser.getUsername());
-Boolean isFriendRequestSent = userService.isFriendRequestSent(user.getUsername(), otherUser.getUsername());
+List<User> friends = userService.getFriendList(user.getUsername());
 %>
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>profile</title>
+    <title>userProfile</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Armata">
@@ -34,31 +31,32 @@ Boolean isFriendRequestSent = userService.isFriendRequestSent(user.getUsername()
 <body>
     <div>
         <div class="container">
-        	<h2>OTHER PROFILE</h2>
-			<%if (!isFriend) { %>
-			    <%if (!isFriendRequestSent) { %>
-					<form action="userControl" method="POST">
-						<input type="hidden" name="action" value="addFriend">
-						<input type="hidden" name="username" value="<%=otherUser.getUsername() %>">
-						<input type="hidden" name="email" value="<%=otherUser.getEmail() %>">
-						<input type="submit" value="Add Friend">
-					</form>
-				<%} else { %>
-					<h3>Friend Request Sent</h3>
-				<%} %>
-			<%} else { %>
-				<h3>Friends</h3>
-			<%} %>
+        	<h2>PROFILE</h2>
+			<form action="userControl" method="POST">
+				<input type="hidden" name="action" value="editProfile">
+				<input type="submit" value="Edit Profile">
+			</form>
             <div class="row" style="padding-top:90px;">
                 <div class="col-md-12" style="width:300px;"><img src="assets/img/empty-profile.png" style="width:240px;height:240px;"></div>
                 <div class="col-md-12" style="width:620px;">
-                    <textarea style="width:600px;">Username : <%=otherUser.getUsername() %></textarea>
-                    <textarea style="width:600px;">Firstname : <%=otherUser.getFirstname() %></textarea>
-                    <textarea style="width:600px;">Surname : <%=otherUser.getSurname() %></textarea>
-                    <textarea style="width:600px;">Gender : <%=otherUser.getGender() %></textarea>
-                    <textarea style="width:600px;">Email : <%=otherUser.getEmail() %></textarea>
-                    <textarea style="width:600px;">DoB : <%=otherUser.getBirthdate() %>/<%=otherUser.getBirthmonth() %>/<%=otherUser.getBirthyear() %></textarea>
-				</div>
+                    <textarea style="width:600px;">Username : <%=user.getUsername() %></textarea>
+                    <textarea style="width:600px;">Firstname : <%=user.getFirstname() %></textarea>
+                    <textarea style="width:600px;">Surname : <%=user.getSurname() %></textarea>
+                    <textarea style="width:600px;">Gender : <%=user.getGender() %></textarea>
+                    <textarea style="width:600px;">Email : <%=user.getEmail() %></textarea>
+                    <textarea style="width:600px;">DoB : <%=user.getBirthdate() %>/<%=user.getBirthmonth() %>/<%=user.getBirthyear() %></textarea>
+                    Friends:<br/>
+                    <%if (friends != null) { %>
+						<%for (User friend : friends) {%>
+							<form action="userControl" method="post">
+								<input type="hidden" name="action" value="profile">
+								<input type="hidden" name="username" value="<%=friend.getUsername() %>">
+								<input type="submit" value="<%=friend.getFirstname() %> <%=friend.getSurname() %>" style="background:none; border-width:0px; color:blue; text-decoration:underline;">
+							</form>
+							<br/>
+						<%} %>
+					<%} %>
+                </div>
             </div>
         </div>
     </div>

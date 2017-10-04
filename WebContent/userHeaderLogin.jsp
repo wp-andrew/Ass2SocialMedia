@@ -11,7 +11,7 @@ body {
 
 .top-navigation {
 	overflow: hidden;
-	background-color: red;
+	background-color: #FFD833;
 	padding: 15px;
 	border: 1px solid black;
 }
@@ -23,7 +23,7 @@ body {
 }
 
 .box {
-	background-color: red;
+	background-color: #FFC833;
 	color: White;
 	font-size: 14px;
     border: 1px solid black;
@@ -31,13 +31,13 @@ body {
 }
 
 .box:hover {
-	background-color: red;
+	background-color: #FFD833;
 }
 </style>
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title>adminHeaderLogin</title>
+	<title>userHeaderLogin</title>
 </head>
 
 <body>
@@ -45,12 +45,15 @@ body {
 		<div class="label">Username</div><!--
 		--><div class="label">Password</div>
 		
-		<form action="adminControl" method="POST">
+		<form action="userControl" method="POST">
 			<input type="hidden" name="action" value="login">
 			<input type="text" name="username" placeholder="Enter Username" required><!--
 			--><input type="password" name="password" placeholder="Enter Password" required><!--
 			--><input class="box" type="submit" value="Log In">
 		</form>
+		
+		<div class="label" clear="left"></div><!--
+		--><a href="#forgottenAccount">Forgotten account?</a>
 	</div>
 </body>
 

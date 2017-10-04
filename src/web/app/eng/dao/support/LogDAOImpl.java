@@ -140,7 +140,7 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 		// post gets liked
 		String sql = "(SELECT * FROM log WHERE predicate=2 AND object1='" + username + "') "
 				+ "UNION (SELECT * FROM log WHERE predicate=3 AND subject='" + username + "') "
-				+ "UNION (SELECT * FROM log WHERE predicate=5 AND object2 IN (SELECT object2 FROM log WHERE predicate=4 AND subject='" + username + "')) "
+				+ "UNION (SELECT * FROM log WHERE predicate=5 AND subject!='" + username + "' AND object2 IN (SELECT object2 FROM log WHERE predicate=4 AND subject='" + username + "')) "
 				+ "ORDER BY datetime DESC;";
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);

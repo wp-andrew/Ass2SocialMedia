@@ -78,7 +78,7 @@ public class EmailService {
 				"Thank you for registering for a UNSWBook Account.<br/>" +
 				"<br/>" +
 				"Help us secure your account by verifying your email.<br/>" +
-				"<a href=\"http://" + serverIPv4Address + ":8080/Ass2SocialMedia/control?action=confirm" + "&username=" + user.getUsername() + "\" target=\"_top\">" +
+				"<a href=\"http://" + serverIPv4Address + ":8080/Ass2SocialMedia/userControl?action=confirm" + "&username=" + user.getUsername() + "\" target=\"_top\">" +
 				"Confirm Email Address" +
 				"</a><br/>" +
 				"<br/>" +
@@ -100,7 +100,7 @@ public class EmailService {
 				"--------------------------------------------------<br/>" +
 				"<br/>" +
 				user.getFirstname() + " " + user.getSurname() + " sent you a friend request on UNSWBook.<br/>" +
-				"<a href=\"http://" + serverIPv4Address + ":8080/Ass2SocialMedia/control?action=acceptFriend" + 
+				"<a href=\"http://" + serverIPv4Address + ":8080/Ass2SocialMedia/userControl?action=acceptFriend" + 
 				"&subject=" + user.getUsername() + "&object1=" + username + "\" target=\"_top\">" +
 				"Accept Friend Request" +
 				"</a><br/>" +

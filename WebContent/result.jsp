@@ -42,7 +42,7 @@ div.panel {
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title>wall</title>
+	<title>result</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -60,13 +60,13 @@ div.panel {
 						<li class="list-group-item">
 						<%if (admin != null) { %>
 							<form action="adminControl" method="post">
-								<input type="hidden" name="action" value="activity">
+								<input type="hidden" name="action" value="userActivityReport">
 								<input type="hidden" name="username" value="<%=result.getUsername() %>">
 								<input type="submit" value="<%=result.getUsername() %>" style="background:none; border-width:0px; color:blue; text-decoration:underline;">
 							</form>
 						<%} else { %>
-							<form action="control" method="post">
-								<input type="hidden" name="action" value="otherProfile">
+							<form action="userControl" method="post">
+								<input type="hidden" name="action" value="profile">
 								<input type="hidden" name="username" value="<%=result.getUsername() %>">
 								<input type="submit" value="<%=result.getUsername() %>" style="background:none; border-width:0px; color:blue; text-decoration:underline;">
 							</form>

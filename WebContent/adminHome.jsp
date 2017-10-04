@@ -15,7 +15,7 @@ String display = (String) session.getAttribute("display");
 
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-	<title>home</title>
+	<title>adminHome</title>
 </head>
 
 <body>
@@ -28,8 +28,8 @@ String display = (String) session.getAttribute("display");
 		<jsp:include page="adminHeader.jsp"/>
 		<%if (display == "result") { %>
 			<jsp:include page="result.jsp"/>
-		<%} else if (display == "activity") { %>
-			<jsp:include page="activity.jsp"/>
+		<%} else if (display == "userActivityReport") { %>
+			<jsp:include page="adminUserActivityReport.jsp"/>
 		<%} %>
 	<%} else { %>
 		<jsp:include page="adminHeaderLogin.jsp"/>

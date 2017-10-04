@@ -98,13 +98,13 @@ public class AdminControlServlet extends HttpServlet {
 			session.setAttribute("searchResults", searchResults);
 		}
         
-        else if (action.equals("activity")) {			
+        else if (action.equals("userActivityReport")) {			
 			UserService userService = new UserService();
 			User user = userService.selectUser(request.getParameter("username"));
 			
 			HttpSession session = request.getSession();
 			session.setAttribute("user", user);
-			session.setAttribute("display", "activity");
+			session.setAttribute("display", "userActivityReport");
 		}
         
         else if (action.equals("ban")) {
