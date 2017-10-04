@@ -13,7 +13,7 @@
 	<h1>Create a new account</h1>
 	It's free and always will be.<br/><br/>
 	
-	<form action="userControl" onsubmit="return validateForm(this.id)" method="POST">
+	<form action="userControl" method="POST">
 	
 		<input type="hidden" name="action" value="registration">
 		
@@ -49,30 +49,5 @@
 		<input type="submit" value="Create Account">
 	</form>
 </body>
-
-<script>
-function validateForm(id) {
-    var birthdate  = document.forms[id]["birthdate"].value;
-    var birthmonth = document.forms[id]["birthmonth"].value;
-    var birthyear  = document.forms[id]["birthyear"].value;
-    //check days
-    if (birthdate<=31 && (birthmonth==1 || birthmonth==3 || birthmonth==5 || birthmonth==7 || birthmonth==8 || birthmonth==10 || birthmonth==12)) {
-    	return true;
-	}
-    else if (birthdate<=30 && (birthmonth==4 || birthmonth==6 || birthmonth==9 || birthmonth==11)) {
-		return true;
-    }
-    else if (birthdate<=28 && birthmonth==2) {
-		return true;
-	}
-    else if (birthdate==29 && birthmonth==2 && (birthyear%400==0 ||(birthyear%4==0 && birthyear%100!=0))) {
-		return true;
-	}
-    else {
-    	alert("Date is invalid!");
-		return false;
-	}
-}
-</script>
 
 </html>

@@ -17,26 +17,26 @@ List<User> results = (List<User>) session.getAttribute("searchResults");
 
 <style>
 button.accordion {
-    background-color: #eee;
-    color: #444;
-    cursor: pointer;
-    padding: 18px;
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-    font-size: 15px;
-    transition: 0.4s;
+	background-color: #eee;
+	color: #444;
+	cursor: pointer;
+	padding: 18px;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 15px;
+	transition: 0.4s;
 }
 
 button.accordion.active, button.accordion:hover {
-    background-color: #ddd; 
+	background-color: #ddd; 
 }
 
 div.panel {
-    padding: 0 18px;
-    display: none;
-    background-color: white;
+	padding: 0 18px;
+	display: none;
+	background-color: white;
 }
 </style>
 

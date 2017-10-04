@@ -36,16 +36,12 @@ List<Post> posts = postService.getPostList(user.getUsername());
 
 <body>
 	<div class="container">
-
 		<div class="row">
 			<div class="col-md-6" style="padding-top:90px;">
 				<div id="form-div" style="margin-right:50px;margin-left:50px;width:500px;">
 					<form action="userControl" method="POST">
 						<input type="hidden" name="action" value="post">
 						<input type="hidden" name="poster" value="<%=user.getUsername() %>">
-					<%--
-					<form method="post" style="width:500px;">
-					--%>
 						<div class="form-group" style="width:500px;">
 							<div class="row">
 								<div class="col-md-12">
@@ -80,20 +76,6 @@ List<Post> posts = postService.getPostList(user.getUsername());
 					</form>
 				</div>
 			</div>
-
-			<%--
-			<h2>WALL</h2>
-
-			<form action="userControl" method="POST">
-				<input type="hidden" name="action" value="post">
-				<input type="hidden" name="poster" value="<%=user.getUsername() %>">
-				<textarea name="content" placeholder="What's on your mind?" cols="50" rows="5"></textarea>
-				<input type="submit" value="Post">
-			</form>
-			--%>
-
-
-
 			<div class="col-md-6" style="padding-top:90px;">
 				<%if (posts != null) { %>
 					<%for (Post post : posts) {%>
@@ -124,24 +106,7 @@ List<Post> posts = postService.getPostList(user.getUsername());
 					<%} %>
 				<%} %>
 			</div>
-
-
 		</div>
-		<%--
-		<ul class="list-group">
-			<%if (posts != null) { %>
-				<%for (Post post : posts) {%>
-					<li class="list-group-item">
-					<%=post.getPoster() %><br/>
-					<%=post.getDatetime() %><br/>
-					<%=post.getContent() %><br/>
-					<%=post.getLikes() %>&#128077;
-					</li>
-				<%} %>
-			<%} %>
-		</ul>
-		--%>
-		
 	</div>
 </body>
 

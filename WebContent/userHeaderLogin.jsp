@@ -18,15 +18,15 @@ body {
 
 .label {
 	display: inline-block;
-    width: 160px;
-    height: 20px;
+	width: 160px;
+	height: 20px;
 }
 
 .box {
 	background-color: #FFC833;
 	color: White;
 	font-size: 14px;
-    border: 1px solid black;
+	border: 1px solid black;
 	cursor: pointer;
 }
 
