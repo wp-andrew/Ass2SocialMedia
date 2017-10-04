@@ -25,9 +25,37 @@ List<User> friends = userService.getFriendList(user.getUsername());
     <link rel="stylesheet" href="assets/css/MUSA_timeline1.css">
     <link rel="stylesheet" href="assets/css/Responsive-feedback-form.css">
     <link rel="stylesheet" href="assets/css/Responsive-feedback-form1.css">
-    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">	
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+	
+<style>
+    .dropdown {
+        overflow: visible;
+        position: relative;
+        display: inline-block;
+    }
 
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        border: outset;
+        border-color: cornflowerblue;
+        width: 200px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
+
+</style>
+	
 <body>
     <div>
         <div class="container">
@@ -36,6 +64,20 @@ List<User> friends = userService.getFriendList(user.getUsername());
 				<input type="hidden" name="action" value="editProfile">
 				<input type="submit" value="Edit Profile">
 			</form>
+			<div class="dropdown">
+                		<button>Friends</button>
+                		<div class="dropdown-content">
+                    			<%if (friends != null) { %>
+                    			<%for (User friend : friends) {%>
+                    			<li>
+                        			<form action="userControl" method="post">
+                            			<input type="submit" value="<%=friend.getUsername()%>" style="background:none; border-width:0px; color:blue; text-decoration:underline;">
+                            			<input type="hidden" name="action" value="userProfile">
+                        			</form></li>
+                    			<%} %>
+                    			<%} %>
+               			 </div>
+            		</div>
             <div class="row" style="padding-top:90px;">
                 <div class="col-md-12" style="width:300px;"><img src="assets/img/empty-profile.png" style="width:240px;height:240px;"></div>
                 <div class="col-md-12" style="width:620px;">
