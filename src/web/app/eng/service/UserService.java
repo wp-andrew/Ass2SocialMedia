@@ -6,7 +6,9 @@ import java.util.List;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
+import web.app.eng.dao.TripleStoreDAO;
 import web.app.eng.dao.UserDAO;
+import web.app.eng.dao.support.TripleStoreDAOImpl;
 import web.app.eng.dao.support.UserDAOImpl;
 import web.app.eng.dto.Log;
 import web.app.eng.dto.User;
@@ -14,7 +16,8 @@ import web.app.eng.dto.User;
 public class UserService {
 	
 	private UserDAO userDAO = UserDAOImpl.getInstance();
-
+	private TripleStoreDAO tripleStoreDAO = TripleStoreDAOImpl.getInstance();
+	
 	public User create(HttpServletRequest request) {
 		User user = new User();
 		
@@ -46,10 +49,10 @@ public class UserService {
 			user.setGender(request.getParameter("gender"));
 		}
 		
-	    return user;
+		return user;
 	}
 	
-	public User create(User user, HttpServletRequest request) {		
+	public User create(User user, HttpServletRequest request) {
 		if (request.getParameter("firstname") != null && !request.getParameter("firstname").equals("")) {
 			user.setFirstname(request.getParameter("firstname"));
 		}
@@ -78,7 +81,7 @@ public class UserService {
 			user.setGender(request.getParameter("gender"));
 		}
 		
-	    return user;
+		return user;
 	}
 	
 	public void register(User user) 
@@ -93,6 +96,7 @@ public class UserService {
 		user.setVerified(false);
 		
 		userDAO.insertUser(user);
+		tripleStoreDAO.insertUser(user);
 		
 		EmailService.sendVerificationEmail(user);
 	}
@@ -153,36 +157,35 @@ public class UserService {
 		log.setObject1(username);
 		
 		LogService logService = new LogService();
-    	if (logService.selectLog(log) != null) {
-    		throw new ServiceException("You have already sent a friend request to " + username + "!");
-    	}
-    	else {
-    		EmailService.sendFriendRequest(user, username, email);
-    		logService.insertLog(log);
-    	}
+		if (logService.selectLog(log) != null) {
+			throw new ServiceException("You have already sent a friend request to " + username + "!");
+		}
+		else {
+			EmailService.sendFriendRequest(user, username, email);
+			logService.insertLog(log);
+		}
 	}
 	
-	public void acceptFriend(HttpServletRequest request) 
-			throws ServiceException {
-    	String subject = request.getParameter("subject");
-    	String object1 = request.getParameter("object1");
-    	
-    	if (userDAO.selectUser(subject) == null || userDAO.selectUser(object1) == null) {
-    		throw new ServiceException("Invalid link!");
-    	}
-    	
-    	Log log = new Log();
-        log.setSubject(subject);
-        log.setPredicate(3);
-        log.setObject1(object1);
-        
-    	LogService logService = new LogService();
-    	if (logService.selectLog(log) != null) {
-    		throw new ServiceException("You have already accepted " + subject + "'s friend request!");
-    	}
-    	else {
-    		logService.insertLog(log);
-    	}
+	public void acceptFriend(HttpServletRequest request) throws ServiceException {
+		String subject = request.getParameter("subject");
+		String object1 = request.getParameter("object1");
+		
+		if (userDAO.selectUser(subject) == null || userDAO.selectUser(object1) == null) {
+			throw new ServiceException("Invalid link!");
+		}
+		
+		Log log = new Log();
+		log.setSubject(subject);
+		log.setPredicate(3);
+		log.setObject1(object1);
+		
+		LogService logService = new LogService();
+		if (logService.selectLog(log) != null) {
+			throw new ServiceException("You have already accepted " + subject + "'s friend request!");
+		}
+		else {
+			logService.insertLog(log);
+		}
 	}
 	
 	public User selectUser(String username) {
@@ -191,6 +194,7 @@ public class UserService {
 	
 	public void updateUser(User user) {
 		userDAO.updateUser(user);
+		tripleStoreDAO.updateUser(user);
 	}
 	
 	public List<User> searchUsers(String firstname, String surname) {
@@ -222,18 +226,18 @@ public class UserService {
 	}
 	
 	public Boolean isFriendRequestSent(String username1, String username2) {
-    	Log log = new Log();
-        log.setSubject(username1);
-        log.setPredicate(2);
-        log.setObject1(username2);
-        
-    	LogService logService = new LogService();
-    	if (logService.selectLog(log) != null) {
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
+		Log log = new Log();
+		log.setSubject(username1);
+		log.setPredicate(2);
+		log.setObject1(username2);
+		
+		LogService logService = new LogService();
+		if (logService.selectLog(log) != null) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 }

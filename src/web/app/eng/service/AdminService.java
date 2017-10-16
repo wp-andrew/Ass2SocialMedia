@@ -5,12 +5,11 @@ import javax.servlet.http.HttpServletRequest;
 import web.app.eng.dao.AdminDAO;
 import web.app.eng.dao.support.AdminDAOImpl;
 import web.app.eng.dto.Admin;
-import web.app.eng.dto.User;
 
 public class AdminService {
 	
 	private AdminDAO adminDAO = AdminDAOImpl.getInstance();
-
+	
 	public Admin create(HttpServletRequest request) {
 		Admin admin = new Admin();
 		

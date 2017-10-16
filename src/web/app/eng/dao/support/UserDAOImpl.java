@@ -14,7 +14,7 @@ import web.app.eng.dto.User;
 public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 	
 	public static UserDAOImpl instance;
-
+	
 	public static UserDAOImpl getInstance() {
 		if (instance == null) {
 			instance = new UserDAOImpl();
@@ -25,7 +25,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 	
 	private User convertUser(ResultSet resultSet) throws SQLException {
 		User user = new User();
-
+		
 		user.setFirstname(resultSet.getString("firstname"));
 		user.setSurname(resultSet.getString("surname"));
 		user.setEmail(resultSet.getString("email"));
@@ -51,7 +51,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			preparedStatement.setString(1, username);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-                User user = convertUser(resultSet);
+				User user = convertUser(resultSet);
 				connection.close();
 				return user;
 			}
@@ -61,7 +61,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
 	
@@ -76,7 +76,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			preparedStatement.setString(2, email);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-                User user = convertUser(resultSet);
+				User user = convertUser(resultSet);
 				connection.close();
 				return user;
 			}
@@ -86,7 +86,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
 	
@@ -101,7 +101,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			preparedStatement.setString(2, password);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-                User user = convertUser(resultSet);
+				User user = convertUser(resultSet);
 				connection.close();
 				return user;
 			}
@@ -111,7 +111,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
 	
@@ -243,8 +243,8 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-                User user = convertUser(resultSet);
-                users.add(user);
+				User user = convertUser(resultSet);
+				users.add(user);
 			}
 			
 			connection.close();
@@ -252,7 +252,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return users;
 	}
 	
@@ -267,8 +267,8 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-                User user = convertUser(resultSet);
-                users.add(user);
+				User user = convertUser(resultSet);
+				users.add(user);
 			}
 			
 			connection.close();
@@ -276,7 +276,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return users;
 	}
 	
@@ -295,8 +295,8 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			preparedStatement.setString(2, username);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-                User user = convertUser(resultSet);
-                users.add(user);
+				User user = convertUser(resultSet);
+				users.add(user);
 			}
 			
 			connection.close();
@@ -304,10 +304,10 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return users;
 	}
-
+	
 	public void banUser(String username) {
 		Connection connection = getConnection();
 		
@@ -343,6 +343,8 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 	}
 	
 	public Boolean isFriend(String username1, String username2) {
+		Boolean friend = false;
+		
 		Connection connection = getConnection();
 		
 		String sql = "SELECT * FROM log WHERE predicate=3 AND ((subject=? AND object1=?) OR (subject=? AND object1=?));";
@@ -354,7 +356,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			preparedStatement.setString(4, username1);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-				return true;
+				friend = true;
 			}
 			
 			connection.close();
@@ -363,7 +365,7 @@ public class UserDAOImpl extends DBConnectionFactory implements UserDAO {
 			e.printStackTrace();
 		}
 		
-		return false;
+		return friend;
 	}
 	
 }

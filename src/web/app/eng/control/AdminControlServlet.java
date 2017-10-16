@@ -23,15 +23,15 @@ import web.app.eng.service.AdminService;
 @WebServlet(urlPatterns="/adminControl", displayName="AdminControlServlet")
 public class AdminControlServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AdminControlServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
+	
+	/**
+	* @see HttpServlet#HttpServlet()
+	*/
+	public AdminControlServlet() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -39,20 +39,20 @@ public class AdminControlServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		doPost(request,response);
 	}
-
+	
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-        String action = new String("");
-        if (request.getParameter("action") != null){
-            action = request.getParameter("action");
-        }
+		String action = new String("");
+		if (request.getParameter("action") != null){
+			action = request.getParameter("action");
+		}
 		
-        String nextPage = "adminHome.jsp";
-        if (action.equals("login")) {
-        	AdminService adminService = new AdminService();
+		String nextPage = "adminHome.jsp";
+		if (action.equals("login")) {
+			AdminService adminService = new AdminService();
 			Admin admin = adminService.create(request);
 			try {
 				adminService.login(admin.getUsername(), admin.getPassword());
@@ -66,8 +66,8 @@ public class AdminControlServlet extends HttpServlet {
 				request.setAttribute("error", e.getMessage());
 			}
 		}
-        
-        else if (action.equals("search")) {			
+		
+		else if (action.equals("search")) {
 			UserService userService = new UserService();
 			String tagName = request.getParameter("tagName");
 			String searchValue = request.getParameter("searchValue");
@@ -97,8 +97,8 @@ public class AdminControlServlet extends HttpServlet {
 			session.setAttribute("display", "result");
 			session.setAttribute("searchResults", searchResults);
 		}
-        
-        else if (action.equals("userActivityReport")) {			
+		
+		else if (action.equals("userActivityReport")) {
 			UserService userService = new UserService();
 			User user = userService.selectUser(request.getParameter("username"));
 			
@@ -106,10 +106,10 @@ public class AdminControlServlet extends HttpServlet {
 			session.setAttribute("user", user);
 			session.setAttribute("display", "userActivityReport");
 		}
-        
-        else if (action.equals("ban")) {
-        	HttpSession session = request.getSession();
-        	
+		
+		else if (action.equals("ban")) {
+			HttpSession session = request.getSession();
+			
 			UserService userService = new UserService();
 			User user = (User) session.getAttribute("user");
 			userService.banUser(user.getUsername());
@@ -117,10 +117,10 @@ public class AdminControlServlet extends HttpServlet {
 			
 			session.setAttribute("user", user);
 		}
-        
-        else if (action.equals("unban")) {			
-        	HttpSession session = request.getSession();
-        	
+		
+		else if (action.equals("unban")) {			
+			HttpSession session = request.getSession();
+			
 			UserService userService = new UserService();
 			User user = (User) session.getAttribute("user");
 			userService.unbanUser(user.getUsername());
@@ -128,14 +128,14 @@ public class AdminControlServlet extends HttpServlet {
 			
 			session.setAttribute("user", user);
 		}
-        
-        else if (action.equals("logout")){
-        	HttpSession session = request.getSession();
-            session.invalidate();
-        }
-        
-        RequestDispatcher requestDispatcher = request.getRequestDispatcher("/" + nextPage);
-        requestDispatcher.forward(request, response);
+		
+		else if (action.equals("logout")){
+			HttpSession session = request.getSession();
+			session.invalidate();
+		}
+		
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/" + nextPage);
+		requestDispatcher.forward(request, response);
 	}
-
+	
 }

@@ -9,12 +9,13 @@ import java.util.List;
 
 import web.app.eng.common.DBConnectionFactory;
 import web.app.eng.dao.PostDAO;
+import web.app.eng.dto.Log;
 import web.app.eng.dto.Post;
 
 public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 	
 	public static PostDAOImpl instance;
-
+	
 	public static PostDAOImpl getInstance() {
 		if (instance == null) {
 			instance = new PostDAOImpl();
@@ -25,7 +26,7 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 	
 	private Post convertPost(ResultSet resultSet) throws SQLException {
 		Post post = new Post();
-
+		
 		post.setId(resultSet.getInt("id"));
 		post.setDatetime(resultSet.getString("datetime"));
 		post.setPoster(resultSet.getString("subject"));
@@ -44,7 +45,7 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 			preparedStatement.setInt(1, id);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-                Post post = convertPost(resultSet);
+				Post post = convertPost(resultSet);
 				connection.close();
 				return post;
 			}
@@ -54,12 +55,14 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
-
+	
 	@Override
-	public void insertPost(Post post) {
+	public Log insertPost(Post post) {
+		Log log = null;
+		
 		Connection connection = getConnection();
 		
 		String sql = "INSERT INTO post (content) VALUES (?);";
@@ -72,10 +75,10 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 			preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-				sql = "INSERT INTO log (subject, predicate, object2) VALUES ('" + post.getPoster() + "', "
-						+ Integer.toString(4) + ", '" + Integer.toString(resultSet.getInt("id")) + "');";
-				preparedStatement = connection.prepareStatement(sql);
-				preparedStatement.executeUpdate();
+				log = new Log();
+				log.setSubject(post.getPoster());
+				log.setPredicate(4);
+				log.setObject2(resultSet.getInt("id"));
 			}
 			
 			connection.close();
@@ -83,6 +86,8 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		return log;
 	}
 	
 	@Override
@@ -95,7 +100,7 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 				+ "INNER JOIN ((SELECT t2.datetime, subject, object2 AS id FROM log AS t2, "
 				+ "(SELECT datetime, object1 AS friend FROM log WHERE predicate=3 AND subject=? "
 				+ "UNION SELECT datetime, subject AS friend FROM log WHERE predicate=3 AND object1=?) AS t3 "
-				+ "WHERE t2.subject=t3.friend AND predicate=4 AND t2.datetime>t3.datetime) "
+				+ "WHERE t2.subject=t3.friend AND predicate=4) "
 				+ "UNION (SELECT datetime, subject, object2 AS id FROM log WHERE subject=? AND predicate=4)) "
 				+ "AS t4 ON t1.id = t4.id ORDER BY t1.id DESC;";
 		
@@ -106,26 +111,26 @@ public class PostDAOImpl extends DBConnectionFactory implements PostDAO {
 			preparedStatement.setString(3, username);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-                Post post = convertPost(resultSet);
-                
-                sql = "SELECT count(*) AS likes FROM log WHERE predicate=5 AND object2=?;";
-                preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.setInt(1, post.getId());
-                ResultSet resultSet2 = preparedStatement.executeQuery();
-                if (resultSet2.next()) {
-	                post.setLikes(resultSet2.getInt("likes"));
-                }
-                
-                sql = "SELECT * FROM log WHERE predicate=5 AND subject=? AND object2=?;";
-                preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.setString(1, username);
-                preparedStatement.setInt(2, post.getId());
-                ResultSet resultSet3 = preparedStatement.executeQuery();
-                if (resultSet3.next()) {
-	                post.setLiked(true);
-                }
-                
-                posts.add(post);
+				Post post = convertPost(resultSet);
+				
+				sql = "SELECT count(*) AS likes FROM log WHERE predicate=5 AND object2=?;";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, post.getId());
+				ResultSet resultSet2 = preparedStatement.executeQuery();
+				if (resultSet2.next()) {
+					post.setLikes(resultSet2.getInt("likes"));
+				}
+				
+				sql = "SELECT * FROM log WHERE predicate=5 AND subject=? AND object2=?;";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setString(1, username);
+				preparedStatement.setInt(2, post.getId());
+				ResultSet resultSet3 = preparedStatement.executeQuery();
+				if (resultSet3.next()) {
+					post.setLiked(true);
+				}
+				
+				posts.add(post);
 			}
 			
 			connection.close();

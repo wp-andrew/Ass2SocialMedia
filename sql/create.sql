@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS admin_profile;
 CREATE TABLE admin_profile (
 	username    varchar(50)  NOT NULL,
 	password    varchar(50)  DEFAULT NULL,
+	email       varchar(150) DEFAULT NULL,
 	PRIMARY KEY (username)
 );
 
@@ -24,7 +25,7 @@ CREATE TABLE user_profile (
 DROP TABLE IF EXISTS post;
 CREATE TABLE post (
 	id          int(8)        NOT NULL AUTO_INCREMENT,
-	content     varchar(1000),
+	content     varchar(250),
 	PRIMARY KEY (id)
 );
 
@@ -45,4 +46,20 @@ CREATE TABLE log (
 	object1     varchar(50) NOT NULL DEFAULT '' REFERENCES user_profile(username),
 	object2     int(8)      NOT NULL DEFAULT 1 REFERENCES post(id),
 	PRIMARY KEY (subject, predicate, object1, object2)
+);
+
+DROP TABLE IF EXISTS entity_store;
+CREATE TABLE entity_store (
+	subject     int(8)			NOT NULL,
+	predicate   varchar(50) 	NOT NULL,
+	object		varchar(250)	NOT NULL,
+	PRIMARY KEY (subject, predicate)
+);
+
+DROP TABLE IF EXISTS triple_store;
+CREATE TABLE triple_store (
+	subject     int(8)		NOT NULL REFERENCES entity_store(subject),
+	predicate   int(8)		NOT NULL REFERENCES entity_store(subject),
+	object		int(8)		NOT NULL REFERENCES entity_store(subject),
+	PRIMARY KEY (subject, predicate, object)
 );

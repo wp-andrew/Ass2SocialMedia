@@ -3,6 +3,7 @@ package web.app.eng.control;
 import java.io.IOException;
 import java.util.List;
 
+import javax.mail.MessagingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -31,7 +32,7 @@ public class UserControlServlet extends HttpServlet {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -101,6 +102,10 @@ public class UserControlServlet extends HttpServlet {
 				userService.acceptFriend(request);
 				
 				request.setAttribute("username", request.getParameter("subject"));
+				if (session.getAttribute("user") != null && 
+						!session.getAttribute("user").equals(request.getParameter("object1"))) {
+					session.setAttribute("user", null);
+				}
 				session.setAttribute("display", "acceptFriend");
 			}
 			catch (ServiceException e) {
@@ -196,7 +201,12 @@ public class UserControlServlet extends HttpServlet {
 		else if (action.equals("post")) {
 			PostService postService = new PostService();
 			Post post = postService.createPost(request);
-			postService.insertPost(post);
+			try {
+				postService.insertPost(post);
+			}
+			catch (MessagingException e) {
+				e.printStackTrace();
+			}
 			
 			session.setAttribute("display", "wall");
 		}
@@ -236,5 +246,5 @@ public class UserControlServlet extends HttpServlet {
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/userHome.jsp");
 		requestDispatcher.forward(request, response);
 	}
-
+	
 }

@@ -10,7 +10,7 @@ public class Log {
 	public String getDatetime() {
 		return datetime;
 	}
-
+	
 	public void setDatetime(String datetime) {
 		this.datetime = datetime;
 	}
@@ -18,7 +18,7 @@ public class Log {
 	public String getSubject() {
 		return subject;
 	}
-
+	
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
@@ -26,7 +26,7 @@ public class Log {
 	public int getPredicate() {
 		return predicate;
 	}
-
+	
 	public void setPredicate(int predicate) {
 		this.predicate = predicate;
 	}
@@ -34,7 +34,7 @@ public class Log {
 	public String getObject1() {
 		return object1;
 	}
-
+	
 	public void setObject1(String object1) {
 		this.object1 = object1;
 	}
@@ -42,7 +42,7 @@ public class Log {
 	public int getObject2() {
 		return object2;
 	}
-
+	
 	public void setObject2(int object2) {
 		this.object2 = object2;
 	}

@@ -14,7 +14,7 @@ import web.app.eng.dto.Log;
 public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 	
 	public static LogDAOImpl instance;
-
+	
 	public static LogDAOImpl getInstance() {
 		if (instance == null) {
 			instance = new LogDAOImpl();
@@ -25,7 +25,7 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 	
 	private Log convertLog(ResultSet resultSet) throws SQLException {
 		Log log = new Log();
-
+		
 		log.setDatetime(resultSet.getString("datetime"));
 		log.setSubject(resultSet.getString("subject"));
 		log.setPredicate(resultSet.getInt("predicate"));
@@ -99,7 +99,7 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
 	public void insertLog(Log log) {
 		Connection connection = getConnection();
@@ -146,8 +146,8 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-                Log log = convertLog(resultSet);
-                logs.add(log);
+				Log log = convertLog(resultSet);
+				logs.add(log);
 			}
 			
 			connection.close();
@@ -171,8 +171,8 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 			preparedStatement.setString(1, username);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			while (resultSet.next()) {
-                Log log = convertLog(resultSet);
-                logs.add(log);
+				Log log = convertLog(resultSet);
+				logs.add(log);
 			}
 			
 			connection.close();

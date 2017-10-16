@@ -17,11 +17,9 @@ public interface LogDAO {
 	public void insertLog(Log log);
 	
 	public void deleteLog(Log log);
-
+	
 	public List<Log> getNotifications(String username);
 	
 	public List<Log> getActivity(String username);
-
-	
 	
 }

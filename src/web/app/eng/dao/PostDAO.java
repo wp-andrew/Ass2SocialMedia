@@ -2,6 +2,7 @@ package web.app.eng.dao;
 
 import java.util.List;
 
+import web.app.eng.dto.Log;
 import web.app.eng.dto.Post;
 
 public interface PostDAO {
@@ -20,7 +21,7 @@ public interface PostDAO {
 	 * @param	The Post to insert
 	 * @return
 	 */
-	public void insertPost(Post post);
+	public Log insertPost(Post post);
 	
 	/**
 	 * Get all of user's own and friend's posts after user join datetime

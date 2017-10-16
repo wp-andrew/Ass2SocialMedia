@@ -16,7 +16,7 @@ public class User {
 	public String getFirstname() {
 		return firstname;
 	}
-
+	
 	public void setFirstname(String firstname) {
 		this.firstname = firstname;
 	}
@@ -24,7 +24,7 @@ public class User {
 	public String getSurname() {
 		return surname;
 	}
-
+	
 	public void setSurname(String surname) {
 		this.surname = surname;
 	}
@@ -32,7 +32,7 @@ public class User {
 	public String getEmail() {
 		return email;
 	}
-
+	
 	public void setEmail(String email) {
 		this.email = email;
 	}
@@ -40,7 +40,7 @@ public class User {
 	public String getUsername() {
 		return username;
 	}
-
+	
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -48,7 +48,7 @@ public class User {
 	public String getPassword() {
 		return password;
 	}
-
+	
 	public void setPassword(String password) {
 		this.password = password;
 	}
@@ -56,7 +56,7 @@ public class User {
 	public int getBirthdate() {
 		return birthdate;
 	}
-
+	
 	public void setBirthdate(int birthdate) {
 		this.birthdate = birthdate;
 	}
@@ -64,7 +64,7 @@ public class User {
 	public int getBirthmonth() {
 		return birthmonth;
 	}
-
+	
 	public void setBirthmonth(int birthmonth) {
 		this.birthmonth = birthmonth;
 	}
@@ -72,7 +72,7 @@ public class User {
 	public int getBirthyear() {
 		return birthyear;
 	}
-
+	
 	public void setBirthyear(int birthyear) {
 		this.birthyear = birthyear;
 	}
@@ -80,7 +80,7 @@ public class User {
 	public String getGender() {
 		return gender;
 	}
-
+	
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
@@ -88,16 +88,17 @@ public class User {
 	public boolean isBanned() {
 		return banned;
 	}
-
+	
 	public void setBanned(boolean banned) {
 		this.banned = banned;
 	}
-
+	
 	public boolean isVerified() {
 		return verified;
 	}
-
+	
 	public void setVerified(boolean verified) {
 		this.verified = verified;
 	}
+	
 }

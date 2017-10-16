@@ -9,7 +9,7 @@ public class DBConnectionFactory {
 	
 	public static final String database = "jdbc:mysql://localhost:3306/unswbook";
 	public static final Properties properties = new Properties();
-
+	
 	public static Connection getConnection() {
 		Connection connection = null;
 		
@@ -30,5 +30,5 @@ public class DBConnectionFactory {
 		
 		return connection;
 	}
-
+	
 }

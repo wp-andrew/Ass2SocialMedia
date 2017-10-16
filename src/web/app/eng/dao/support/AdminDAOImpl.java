@@ -10,9 +10,9 @@ import web.app.eng.dao.AdminDAO;
 import web.app.eng.dto.Admin;
 
 public class AdminDAOImpl extends DBConnectionFactory implements AdminDAO {
-
+	
 	public static AdminDAOImpl instance;
-
+	
 	public static AdminDAOImpl getInstance() {
 		if (instance == null) {
 			instance = new AdminDAOImpl();
@@ -26,6 +26,7 @@ public class AdminDAOImpl extends DBConnectionFactory implements AdminDAO {
 		
 		admin.setUsername(resultSet.getString("username"));
 		admin.setPassword(resultSet.getString("password"));
+		admin.setPassword(resultSet.getString("email"));
 		
 		return admin;
 	}
@@ -40,7 +41,7 @@ public class AdminDAOImpl extends DBConnectionFactory implements AdminDAO {
 			preparedStatement.setString(1, username);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-                Admin admin = convertAdmin(resultSet);
+				Admin admin = convertAdmin(resultSet);
 				connection.close();
 				return admin;
 			}
@@ -50,7 +51,7 @@ public class AdminDAOImpl extends DBConnectionFactory implements AdminDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
 	
@@ -65,7 +66,7 @@ public class AdminDAOImpl extends DBConnectionFactory implements AdminDAO {
 			preparedStatement.setString(2, password);
 			ResultSet resultSet = preparedStatement.executeQuery();
 			if (resultSet.next()) {
-                Admin admin = convertAdmin(resultSet);
+				Admin admin = convertAdmin(resultSet);
 				connection.close();
 				return admin;
 			}
@@ -75,8 +76,8 @@ public class AdminDAOImpl extends DBConnectionFactory implements AdminDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-
+		
 		return null;
 	}
-
+	
 }
