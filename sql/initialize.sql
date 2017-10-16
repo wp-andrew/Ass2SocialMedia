@@ -9,6 +9,7 @@ INSERT INTO operation (description) VALUES ('REQUEST');
 INSERT INTO operation (description) VALUES ('FRIEND');
 INSERT INTO operation (description) VALUES ('POST');
 INSERT INTO operation (description) VALUES ('LIKE');
+INSERT INTO operation (description) VALUES ('BULLY');
 
 INSERT INTO entity_store VALUES (1, 'type', 'bidirectionalLink');
 INSERT INTO entity_store VALUES (1, 'class', 'edge');

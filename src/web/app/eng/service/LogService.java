@@ -31,8 +31,8 @@ public class LogService {
 		return logDAO.getNotifications(username);
 	}
 	
-	public List<Log> getActivity(String username) {
-		return logDAO.getActivity(username);
+	public List<Log> getActivities(String username) {
+		return logDAO.getActivities(username);
 	}
 	
 }

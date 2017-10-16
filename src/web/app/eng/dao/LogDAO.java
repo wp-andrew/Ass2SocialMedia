@@ -20,6 +20,6 @@ public interface LogDAO {
 	
 	public List<Log> getNotifications(String username);
 	
-	public List<Log> getActivity(String username);
+	public List<Log> getActivities(String username);
 	
 }

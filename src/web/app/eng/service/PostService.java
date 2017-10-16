@@ -36,18 +36,20 @@ public class PostService {
 	}
 	
 	public void insertPost(Post post) throws ClientProtocolException, IOException, MessagingException {
-		RestPost restPost = new RestPost();
-		List<String> bullyingKeywords = restPost.ExtractBullyingKeywords(post.getContent());
-		if (!bullyingKeywords.isEmpty()) {
-			EmailService.sendBullyingNotification(post, bullyingKeywords);
-		}
-		
 		Log log = postDAO.insertPost(post);
 		post.setId(log.getObject2());
 		tripleStoreDAO.insertPost(post);
 		
 		LogService logService = new LogService();
 		logService.insertLog(log);
+		
+		RestPost restPost = new RestPost();
+		List<String> bullyingKeywords = restPost.ExtractBullyingKeywords(post.getContent());
+		if (!bullyingKeywords.isEmpty()) {
+			EmailService.sendBullyingNotification(post, bullyingKeywords);
+			log.setPredicate(6);
+			logService.insertLog(log);
+		}
 	}
 	
 	public List<Post> getPostList(String username) {

@@ -117,7 +117,7 @@ public class EmailService {
 	
 	public static void sendBullyingNotification(Post post, List<String> bullyingKeywords) throws MessagingException, SocketException {
 		String to = "unswbook.server@gmail.com";
-		String title = post.getPoster() + " post contain keywords related to bullying";
+		String title = post.getPoster() + "'s post contains reference to bullying";
 		String keywords = "";
 		for (String bullyingKeyword : bullyingKeywords) {
 			keywords += (bullyingKeyword + ", ");
@@ -128,7 +128,7 @@ public class EmailService {
 				"<br/>" +
 				"--------------------------------------------------<br/>" +
 				"<br/>" +
-				post.getPoster() + " post contain keywords related to bullying.<br/>" +
+				post.getPoster() + "'s post contains reference to bullying.<br/>" +
 				"<br/>" +
 				"Keywords:<br/>" +
 				keywords + "<br/>" +

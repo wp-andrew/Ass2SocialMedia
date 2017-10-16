@@ -12,7 +12,7 @@
 <%
 User user = (User) session.getAttribute("user");
 LogService logService = new LogService();
-List<Log> activities = logService.getActivity(user.getUsername());
+List<Log> activities = logService.getActivities(user.getUsername());
 %>
 
 <head>
@@ -64,8 +64,10 @@ List<Log> activities = logService.getActivity(user.getUsername());
 								<%=activity.getDatetime() %> | <%=activity.getObject1() %> accepted <%=activity.getSubject() %> friend request<br/>
 							<%} else if (activity.getPredicate() == 4) { %>
 								<%=activity.getDatetime() %> | <%=activity.getSubject() %> posted post <%=activity.getObject2() %><br/>
-							<%} else { %>
+							<%} else if (activity.getPredicate() == 5) { %>
 								<%=activity.getDatetime() %> | <%=activity.getSubject() %> liked post <%=activity.getObject2() %><br/>
+							<%} else { %>
+								<%=activity.getDatetime() %> | <%=activity.getSubject() %>'s post <%=activity.getObject2() %> contains reference to bullying<br/>
 							<%} %>
 						<%} %>
 					<%} %>

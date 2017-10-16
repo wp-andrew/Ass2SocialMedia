@@ -117,6 +117,9 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 		case 5:	// 'subject' likes a post with post id 'object2'
 			sql = "INSERT INTO log (subject, predicate, object2) VALUES ('" + log.getSubject() + "', " + Integer.toString(log.getPredicate()) + ", '" + Integer.toString(log.getObject2()) + "');";
 			break;
+		case 6:	// 'subject's post id 'object2' contains reference to bullying
+			sql = "INSERT INTO log (subject, predicate, object2) VALUES ('" + log.getSubject() + "', " + Integer.toString(log.getPredicate()) + ", '" + Integer.toString(log.getObject2()) + "');";
+			break;
 		}
 		try {
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
@@ -160,7 +163,7 @@ public class LogDAOImpl extends DBConnectionFactory implements LogDAO {
 	}
 	
 	@Override
-	public List<Log> getActivity(String username) {
+	public List<Log> getActivities(String username) {
 		Connection connection = getConnection();
 		
 		List<Log> logs = new ArrayList<Log>();
