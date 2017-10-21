@@ -57,7 +57,6 @@ body {
 .dropdown:hover .dropdown-content {
 	display: block;
 }
-
 </style>
 
 <%
@@ -127,6 +126,10 @@ List<Log> notifications = logService.getNotifications(user.getUsername());
 				<%} %>
 			</div>
 		</div>
+		<form class="inline-form" action="userControl" method="POST">
+			<input type="hidden" name="action" value="graph">
+			<input class="box" type="submit" value="Your Circle">
+		</form>
 		<form class="inline-form" action="userControl" method="POST">
 			<input type="hidden" name="action" value="logout">
 			<input class="box" type="submit" value="Log Out">

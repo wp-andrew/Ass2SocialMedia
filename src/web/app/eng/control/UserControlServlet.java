@@ -12,10 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
+
 import web.app.eng.dto.Post;
 import web.app.eng.dto.User;
 import web.app.eng.service.PostService;
 import web.app.eng.service.ServiceException;
+import web.app.eng.service.TripleStoreService;
 import web.app.eng.service.UserService;
 
 /**
@@ -57,7 +60,7 @@ public class UserControlServlet extends HttpServlet {
 			try {
 				UserService userService = new UserService();
 				User user = userService.create(request);
-				userService.register(user);
+				userService.insertUser(user);
 				
 				session.setAttribute("user", null);
 				session.setAttribute("display", "confirmEmail");
@@ -237,6 +240,49 @@ public class UserControlServlet extends HttpServlet {
 			catch (ServiceException e) {
 				request.setAttribute("error", e.getMessage());
 			}
+		}
+		
+		else if (action.equals("graph")) {
+			User user = (User) session.getAttribute("user");
+			TripleStoreService tripleStoreService = new TripleStoreService();
+			List<JSONObject> relations = tripleStoreService.getAllRelations(user.getUsername());
+			List<JSONObject> entities = tripleStoreService.getEntities(relations);
+			
+			request.setAttribute("relations", relations);
+			request.setAttribute("entities", entities);
+			session.setAttribute("display", "graph");
+		}
+		
+		else if (action.equals("graphSearch")) {
+			List<JSONObject> relations = null;
+			List<JSONObject> entities = null;
+			
+			String tagName = request.getParameter("tagName");
+			String searchValue = request.getParameter("searchValue");
+			
+			TripleStoreService tripleStoreService = new TripleStoreService();
+			if (tagName.equals("user")) {
+				relations = tripleStoreService.getAllRelations(searchValue);
+				entities = tripleStoreService.getEntities(relations);
+			}
+			else if (tagName.equals("post")) {
+				try {
+					int number = Integer.parseInt(searchValue);
+					relations = tripleStoreService.searchPosts(number);
+					entities = tripleStoreService.getEntities(relations);
+				}
+				catch (Exception e) {
+					
+				}
+			}
+			else if (tagName.equals("friendsOf")) {
+				relations = tripleStoreService.getFriendsOf(searchValue);
+				entities = tripleStoreService.getEntities(relations);
+			}
+			
+			request.setAttribute("relations", relations);
+			request.setAttribute("entities", entities);
+			session.setAttribute("display", "graph");
 		}
 		
 		else if (action.equals("logout")) {

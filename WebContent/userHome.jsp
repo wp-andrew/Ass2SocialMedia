@@ -48,6 +48,8 @@ String display = (String) session.getAttribute("display");
 		<jsp:include page="result.jsp"/>
 	<%} else if (display == "profile") { %>
 		<jsp:include page="profile.jsp"/>
+	<%} else if (display == "graph") { %>
+		<jsp:include page="userGraph.jsp"/>
 	<%} else { %>
 		<jsp:include page="userWall.jsp"/>
 	<%} %>

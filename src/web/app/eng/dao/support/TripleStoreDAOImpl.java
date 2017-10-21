@@ -4,6 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.json.JSONObject;
 
 import web.app.eng.common.DBConnectionFactory;
 import web.app.eng.dao.TripleStoreDAO;
@@ -23,7 +31,7 @@ public class TripleStoreDAOImpl extends DBConnectionFactory implements TripleSto
 		return instance;
 	}
 	
-	public int getNextID() {
+	private int getNextID() {
 		int id = 0;
 		
 		Connection connection = getConnection();
@@ -225,7 +233,7 @@ public class TripleStoreDAOImpl extends DBConnectionFactory implements TripleSto
 		}
 	}
 	
-	public void insertFriendOfRelation(Log log) {
+	private void insertFriendOfRelation(Log log) {
 		int subject, object;
 		
 		Connection connection = getConnection();
@@ -262,7 +270,7 @@ public class TripleStoreDAOImpl extends DBConnectionFactory implements TripleSto
 		}
 	}
 	
-	public void insertPostedRelation(Log log) {
+	private void insertPostedRelation(Log log) {
 		int subject, object;
 		
 		Connection connection = getConnection();
@@ -299,7 +307,7 @@ public class TripleStoreDAOImpl extends DBConnectionFactory implements TripleSto
 		}
 	}
 	
-	public void insertLikedRelation(Log log) {
+	private void insertLikedRelation(Log log) {
 		int subject, object;
 		
 		Connection connection = getConnection();
@@ -351,15 +359,15 @@ public class TripleStoreDAOImpl extends DBConnectionFactory implements TripleSto
 		}
 	}
 	
-	public void deleteFriendOfRelation(Log log) {
+	private void deleteFriendOfRelation(Log log) {
 		
 	}
 	
-	public void deletePostedRelation(Log log) {
+	private void deletePostedRelation(Log log) {
 		
 	}
 	
-	public void deleteLikedRelation(Log log) {
+	private void deleteLikedRelation(Log log) {
 		int subject, object;
 		
 		Connection connection = getConnection();
@@ -409,6 +417,385 @@ public class TripleStoreDAOImpl extends DBConnectionFactory implements TripleSto
 			deleteLikedRelation(log);;
 			break;
 		}
+	}
+	
+	private int getId(String username) {
+		int id = 0;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject AS id FROM entity_store "
+				+ "WHERE predicate='username' AND object=? "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='node');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setString(1, username);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				id = resultSet.getInt("id");
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return id;
+	}
+	
+	@Override
+	public List<JSONObject> getAllRelations(String username) {
+		List<JSONObject> relations = null;
+		int subject = getId(username);
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject, object FROM entity_store "
+				+ "WHERE predicate='label' AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='edge');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet rs = preparedStatement.executeQuery();
+			HashMap<Integer,String> hm = new HashMap<Integer,String>();
+			while (rs.next()) {
+				hm.put(rs.getInt("subject"), rs.getString("object"));
+			}
+			
+			sql = "SELECT * FROM triple_store WHERE subject=? OR object=?;";
+			preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, subject);
+			preparedStatement.setInt(2, subject);
+			rs = preparedStatement.executeQuery();
+			
+			relations = new ArrayList<JSONObject>();
+			while (rs.next()) {
+				JSONObject relation = new JSONObject();
+				relation.put("from", rs.getInt("subject"));
+				relation.put("to", rs.getInt("object"));
+				relation.put("label", hm.get(rs.getInt("predicate")));
+				
+				relations.add(relation);
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(relations);
+		return relations;
+	}
+	
+	@Override
+	public List<JSONObject> getFriendsOf(String username) {
+		int subject = getId(username), predicate = 0;
+		
+		List<JSONObject> relations = null;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject FROM entity_store "
+				+ "WHERE predicate='label' AND object='friendOf' "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='edge');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				predicate = rs.getInt("subject");
+				
+				sql = "SELECT subject, object FROM triple_store "
+						+ "WHERE predicate=? AND (subject=? OR object=?);";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, predicate);
+				preparedStatement.setInt(2, subject);
+				preparedStatement.setInt(3, subject);
+				rs = preparedStatement.executeQuery();
+				relations = new ArrayList<JSONObject>();
+				while (rs.next()) {
+					JSONObject relation = new JSONObject();
+					relation.put("from", rs.getInt("subject"));
+					relation.put("to", rs.getInt("object"));
+					relation.put("label", "friendOf");
+					
+					relations.add(relation);
+				}
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(relations);
+		return relations;
+	}
+
+	@Override
+	public List<JSONObject> getPosted(String username) {
+		int subject = getId(username), predicate = 0;
+		
+		List<JSONObject> relations = null;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject FROM entity_store "
+				+ "WHERE predicate='label' AND object='posted' "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='edge');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				predicate = rs.getInt("subject");
+				
+				sql = "SELECT object FROM triple_store WHERE subject=? AND predicate=?;";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, subject);
+				preparedStatement.setInt(2, predicate);
+				rs = preparedStatement.executeQuery();
+				relations = new ArrayList<JSONObject>();
+				while (rs.next()) {
+					JSONObject relation = new JSONObject();
+					relation.put("from", subject);
+					relation.put("to", rs.getInt("object"));
+					relation.put("label", "posted");
+					
+					relations.add(relation);
+				}
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(relations);
+		return relations;
+	}
+
+	@Override
+	public List<JSONObject> getLiked(String username) {
+		int subject = getId(username), predicate = 0;
+		
+		List<JSONObject> relations = null;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject FROM entity_store "
+				+ "WHERE predicate='label' AND object='liked' "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='edge');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				predicate = rs.getInt("subject");
+				
+				sql = "SELECT object FROM triple_store WHERE subject=? AND predicate=?;";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, subject);
+				preparedStatement.setInt(2, predicate);
+				rs = preparedStatement.executeQuery();
+				relations = new ArrayList<JSONObject>();
+				while (rs.next()) {
+					JSONObject relation = new JSONObject();
+					relation.put("from", subject);
+					relation.put("to", rs.getInt("object"));
+					relation.put("label", "liked");
+					
+					relations.add(relation);
+				}
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(relations);
+		return relations;
+	}
+	
+	private int getId(int number) {
+		int id = 0;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject AS id FROM entity_store "
+				+ "WHERE predicate='number' AND object=? "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='node');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			preparedStatement.setInt(1, number);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			if (resultSet.next()) {
+				id = resultSet.getInt("id");
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return id;
+	}
+	
+	@Override
+	public List<JSONObject> getPostedBy(int number) {
+		int object = getId(number), predicate = 0;
+		
+		List<JSONObject> relations = null;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject FROM entity_store "
+				+ "WHERE predicate='label' AND object='posted' "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='edge');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				predicate = rs.getInt("subject");
+				
+				sql = "SELECT subject FROM triple_store WHERE predicate=? AND object=?;";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, predicate);
+				preparedStatement.setInt(2, object);
+				rs = preparedStatement.executeQuery();
+				relations = new ArrayList<JSONObject>();
+				while (rs.next()) {
+					JSONObject relation = new JSONObject();
+					relation.put("from", rs.getInt("subject"));
+					relation.put("to", object);
+					relation.put("label", "posted");
+					
+					relations.add(relation);
+				}
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(relations);
+		return relations;
+	}
+
+	@Override
+	public List<JSONObject> getLikedBy(int number) {
+		int object = getId(number), predicate = 0;
+		
+		List<JSONObject> relations = null;
+		
+		Connection connection = getConnection();
+		
+		String sql = "SELECT subject FROM entity_store "
+				+ "WHERE predicate='label' AND object='liked' "
+				+ "AND subject IN (SELECT subject FROM entity_store "
+				+ "WHERE predicate='class' AND object='edge');";
+		try {
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			ResultSet rs = preparedStatement.executeQuery();
+			if (rs.next()) {
+				predicate = rs.getInt("subject");
+				
+				sql = "SELECT subject FROM triple_store WHERE predicate=? AND object=?;";
+				preparedStatement = connection.prepareStatement(sql);
+				preparedStatement.setInt(1, predicate);
+				preparedStatement.setInt(2, object);
+				rs = preparedStatement.executeQuery();
+				relations = new ArrayList<JSONObject>();
+				while (rs.next()) {
+					JSONObject relation = new JSONObject();
+					relation.put("from", rs.getInt("subject"));
+					relation.put("to", object);
+					relation.put("label", "liked");
+					
+					relations.add(relation);
+				}
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(relations);
+		return relations;
+	}
+	
+	@Override
+	public List<JSONObject> searchUsers(String searchValue) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<JSONObject> searchPosts(int number) {
+		List<JSONObject> relations = new ArrayList<JSONObject>(getPostedBy(number));
+		relations.addAll(getLikedBy(number));
+		
+		//System.out.println(relations);
+		return relations;
+	}
+	
+	@Override
+	public List<JSONObject> getEntities(List<JSONObject> relations) {
+		List<JSONObject> entities = new ArrayList<JSONObject>();
+		
+		Connection connection = getConnection();
+		
+		Set<Integer> subjects = new HashSet<>();
+		int subject;
+		String sql = "", predicate, object;
+		try {
+			for (JSONObject relation : relations) {
+				for (String key : Arrays.asList("from", "to")) {
+					subject = relation.getInt(key);
+					if (!subjects.contains(subject)) {
+						subjects.add(subject);
+						sql = "SELECT object FROM entity_store WHERE subject=? AND predicate=?;";
+						PreparedStatement preparedStatement = connection.prepareStatement(sql);
+						preparedStatement.setInt(1, subject);
+						preparedStatement.setString(2, "type");
+						ResultSet rs = preparedStatement.executeQuery();
+						if (!rs.next()) return null;
+						object = rs.getString("object");
+						if (object.equals("user"))
+							predicate = "username";
+						else
+							predicate = "number";
+						
+						preparedStatement = connection.prepareStatement(sql);
+						preparedStatement.setInt(1, subject);
+						preparedStatement.setString(2, predicate);
+						rs = preparedStatement.executeQuery();
+						if (!rs.next()) return null;
+						JSONObject entity = new JSONObject();
+						entity.put("id", subject);
+						entity.put("label", rs.getString("object"));
+						entity.put("shape", "image");
+						entity.put("image", "visjs/img/"+object+".png");
+						
+						entities.add(entity);
+					}
+				}
+			}
+			
+			connection.close();
+		}
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		//System.out.println(entities);
+		return entities;
 	}
 	
 }

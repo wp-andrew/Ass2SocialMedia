@@ -84,8 +84,7 @@ public class UserService {
 		return user;
 	}
 	
-	public void register(User user) 
-			throws MessagingException, SocketException {
+	public void insertUser(User user) throws MessagingException, SocketException {
 		// verify that username is unique
 		User userExist = userDAO.selectUser(user.getUsername());
 		if (userExist != null) {
